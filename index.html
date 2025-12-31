@@ -22,6 +22,8 @@ h1 {
     color: #d6c2a3;
 }
 
+/* === LAYOUT === */
+
 #container {
     display: flex;
     height: 80vh;
@@ -29,6 +31,7 @@ h1 {
     gap: 20px;
 }
 
+/* Map */
 #map {
     flex: 2;
     border-radius: 16px;
@@ -36,6 +39,7 @@ h1 {
     background: #efe7d6;
 }
 
+/* Sidebar */
 #info {
     flex: 1;
     display: flex;
@@ -53,7 +57,6 @@ h1 {
 #info h2 {
     margin-top: 0;
     color: #d8c3a5;
-    font-weight: normal;
 }
 
 .place-image {
@@ -76,25 +79,24 @@ h1 {
 
 .link:hover {
     color: #e0c896;
-    border-color: #e0c896;
 }
 
 .next-button {
-    display: inline-block;
     margin-top: 15px;
-    padding: 8px 16px;
+    padding: 10px 18px;
     background: #bfa57a;
     color: #3b2f24;
-    text-decoration: none;
     border-radius: 6px;
     cursor: pointer;
     font-weight: bold;
+    display: inline-block;
 }
 
 .next-button:hover {
     background: #d0b58c;
 }
 
+/* Pin */
 .custom-pin {
     width: 18px;
     height: 18px;
@@ -104,7 +106,6 @@ h1 {
     position: relative;
     box-shadow: 0 0 6px rgba(0,0,0,0.6);
 }
-
 .custom-pin::after {
     content: "";
     width: 8px;
@@ -114,6 +115,29 @@ h1 {
     top: 5px;
     left: 5px;
     border-radius: 50%;
+}
+
+/* ---------- MOBILE ADAPTATION ---------- */
+@media (max-width: 900px) {
+    #container {
+        flex-direction: column;
+        height: auto;
+    }
+
+    #map {
+        height: 45vh;
+        width: 100%;
+    }
+
+    #info {
+        height: auto;
+        border-radius: 0 0 16px 16px;
+    }
+
+    h1 {
+        font-size: 1.4rem;
+        padding: 14px 0;
+    }
 }
 </style>
 </head>
@@ -140,9 +164,9 @@ const locations = [
     {
         name: "Ramagiri",
         coords: [21.3972, 79.3271],
-        text: "The launchpad of our epic journey.",
-        link: "https://dhyankatha.wordpress.com",
-        image: "https://as2.ftcdn.net/jpg/05/01/19/79/1000_F_501197913_jyVGqK5uSWraWXXHbSIXmbCiijJmJCMQ.jpg"
+        text: "A hill of exile, memory, and epic resonance.",
+        link: "/blog/ramtek",
+        image: "https://upload.wikimedia.org/wikipedia/commons/1/1e/Ramtek_Temple.jpg"
     },
     {
         name: "Amrakuta",
@@ -229,7 +253,7 @@ function showSidebar(place) {
     };
 }
 
-// Initial screen
+// Initial view
 showSidebar("welcome");
 </script>
 
