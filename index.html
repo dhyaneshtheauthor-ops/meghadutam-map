@@ -15,21 +15,36 @@ html, body {
     overflow: hidden;
 }
 
-/* === MAP FULLSCREEN === */
+/* ===== TITLE BAR ===== */
+#titlebar {
+    position: absolute;
+    top: 0;
+    width: 100%;
+    text-align: center;
+    padding: 14px 0;
+    background: linear-gradient(to bottom, rgba(30,27,24,0.95), rgba(30,27,24,0.6));
+    color: #e6dccf;
+    font-size: 26px;
+    letter-spacing: 2px;
+    z-index: 20;
+    border-bottom: 1px solid #3d3226;
+}
+
+/* === MAP === */
 #map {
     position: absolute;
     inset: 0;
     z-index: 1;
 }
 
-/* === PARCHMENT OVERLAY TEXTURE === */
+/* parchment overlay */
 #map::after {
     content: "";
     position: absolute;
     inset: 0;
     background:
-        radial-gradient(circle at 20% 30%, rgba(255,255,255,0.05), transparent 40%),
-        radial-gradient(circle at 80% 60%, rgba(255,255,255,0.04), transparent 45%),
+        radial-gradient(circle at 25% 30%, rgba(255,255,255,0.06), transparent 40%),
+        radial-gradient(circle at 75% 70%, rgba(255,255,255,0.04), transparent 45%),
         repeating-linear-gradient(
             45deg,
             rgba(255,255,255,0.015),
@@ -41,38 +56,31 @@ html, body {
     z-index: 2;
 }
 
-/* === POPUP PANEL === */
+/* === INFO PANEL === */
 #panel {
     position: absolute;
-    right: 30px;
-    top: 50%;
-    transform: translateY(-50%);
+    right: 28px;
+    top: 90px;
     width: 360px;
     max-width: 90vw;
     background: #26221e;
     border: 1px solid #3d3226;
     border-radius: 18px;
     padding: 22px;
-    box-shadow: 0 15px 40px rgba(0,0,0,0.6);
+    box-shadow: 0 18px 40px rgba(0,0,0,0.6);
     color: #e6dccf;
     z-index: 10;
-    display: none;
     animation: fadeIn 0.6s ease;
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(-40%) }
-    to { opacity: 1; transform: translateY(-50%) }
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
 #panel h2 {
     margin-top: 0;
-    font-weight: normal;
     color: #d8c3a5;
-}
-
-#panel p {
-    line-height: 1.6;
 }
 
 .place-image {
@@ -82,33 +90,37 @@ html, body {
     border-radius: 12px;
     margin-bottom: 14px;
     border: 1px solid #4a3c2c;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
 }
 
-.link {
+/* Buttons */
+.primary-btn {
+    display: block;
+    margin-top: 16px;
+    padding: 10px 18px;
+    background: #c9ad78;
+    color: #2f261d;
+    text-align: center;
+    font-weight: bold;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: background 0.3s ease;
+}
+
+.primary-btn:hover {
+    background: #e1c48a;
+}
+
+.secondary-btn {
     display: inline-block;
     margin-top: 10px;
+    font-size: 14px;
     color: #c9ab7a;
-    text-decoration: none;
-    border-bottom: 1px solid #c9ab7a;
-}
-
-.link:hover {
-    color: #e0c896;
-}
-
-.next-button {
-    margin-top: 16px;
-    display: inline-block;
-    padding: 8px 16px;
-    background: #bfa57a;
-    color: #3b2f24;
-    border-radius: 6px;
-    font-weight: bold;
+    text-decoration: underline;
     cursor: pointer;
 }
 
-/* === MAP PINS === */
+/* Pins */
 .custom-pin {
     width: 18px;
     height: 18px;
@@ -133,8 +145,8 @@ html, body {
 
 <body>
 
+<div id="titlebar">Meghadutam: The Cloud’s Journey</div>
 <div id="map"></div>
-
 <div id="panel"></div>
 
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
@@ -152,7 +164,7 @@ const locations = [
         coords: [21.3972, 79.3271],
         text: "A hill of exile, memory, and epic resonance.",
         link: "/blog/ramtek",
-        image: "https://as2.ftcdn.net/jpg/05/01/19/79/1000_F_501197913_jyVGqK5uSWraWXXHbSIXmbCiijJmJCMQ.jpg"
+        image: "https://upload.wikimedia.org/wikipedia/commons/1/1e/Ramtek_Temple.jpg"
     },
     {
         name: "Amrakuta",
@@ -186,8 +198,8 @@ const locations = [
 
 const panel = document.getElementById("panel");
 
-function showPanel(content) {
-    panel.innerHTML = content;
+function showPanel(html) {
+    panel.innerHTML = html;
     panel.style.display = "block";
 }
 
@@ -196,9 +208,9 @@ function showWelcome() {
         <h2>Svāgataṃ</h2>
         <p>
         Follow the path of the cloud messenger across sacred landscapes,
-        where poetry, geography, and memory converge.
+        where poetry, memory, and geography converge.
         </p>
-        <div class="next-button" onclick="showPlace(0)">Enter the Map →</div>
+        <div class="primary-btn" onclick="showPlace(0)">Enter the Map</div>
     `);
 }
 
@@ -208,8 +220,8 @@ function showPlace(index) {
         <img class="place-image" src="${p.image}">
         <h2>${p.name}</h2>
         <p>${p.text}</p>
-        <a class="link" href="${p.link}">Read more →</a>
-        <div class="next-button" onclick="showPlace(${(index + 1) % locations.length})">Next →</div>
+        <a class="primary-btn" href="${p.link}">Read More</a>
+        <div class="secondary-btn" onclick="showPlace(${(index + 1) % locations.length})">Next →</div>
     `);
     map.panTo(p.coords, { animate: true, duration: 1 });
 }
