@@ -1,95 +1,168 @@
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="utf-8">
-<title>Sacred Landscapes of Central India</title>
-
-<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 
 <style>
-body {
-  margin: 0;
-  background: #f7f2e8;
-  font-family: 'Georgia', serif;
-}
+    /* --- STYLING SECTION --- */
+    /* Adjust the fonts and colors here to match your site's theme */
+    :root {
+        --map-accent: #8b4513; /* Deep Bronze/Sienna */
+        --map-bg: #fdfaf1;    /* Parchment-like background */
+        --map-text: #2c1e14;
+    }
 
-h2 {
-  text-align: center;
-  color: #6b3e1e;
-  margin: 20px 0;
-}
+    .historical-map-container {
+        font-family: 'Georgia', serif;
+        max-width: 1000px;
+        margin: 20px auto;
+        padding: 15px;
+        background-color: var(--map-bg);
+        border: 1px solid #d4c5a9;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        border-radius: 8px;
+    }
 
-#map {
-  height: 500px;
-  width: 100%;
-  border-radius: 12px;
-  border: 2px solid #c9b08a;
-}
+    .map-header {
+        text-align: center;
+        margin-bottom: 15px;
+    }
 
-.leaflet-popup-content {
-  font-family: Georgia, serif;
-  font-size: 15px;
-}
+    .map-header h2 {
+        color: var(--map-accent);
+        margin: 0;
+        font-variant: small-caps;
+        letter-spacing: 1px;
+    }
+
+    /* Map Height and Border */
+    #map {
+        height: 500px;
+        width: 100%;
+        border: 2px solid #a89370;
+        border-radius: 4px;
+        z-index: 1;
+    }
+
+    /* Making the OSM tiles look more "Historical/Antique" */
+    .leaflet-tile-pane {
+        filter: sepia(0.6) hue-rotate(-15deg) contrast(0.9) brightness(1.1);
+    }
+
+    /* Popup Styling */
+    .custom-popup .leaflet-popup-content-wrapper {
+        background: #fffdf5;
+        color: var(--map-text);
+        border-radius: 0;
+        border-left: 4px solid var(--map-accent);
+    }
+
+    .custom-popup .leaflet-popup-content {
+        font-size: 1.1rem;
+        font-weight: bold;
+    }
+
+    .popup-link {
+        display: block;
+        margin-top: 5px;
+        color: var(--map-accent);
+        text-decoration: none;
+        font-size: 0.9rem;
+        font-style: italic;
+    }
+
+    .popup-link:hover {
+        text-decoration: underline;
+    }
+
+    /* Marker Hover Animation */
+    .leaflet-marker-icon {
+        transition: transform 0.2s ease-out;
+    }
+    .leaflet-marker-icon:hover {
+        transform: scale(1.2) translateY(-5px) !important;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        #map { height: 400px; }
+        .map-header h2 { font-size: 1.5rem; }
+    }
 </style>
-</head>
 
-<body>
+<div class="historical-map-container">
+    <div class="map-header">
+        <h2>Sacred Landscapes of Central India</h2>
+    </div>
+    
+    <div id="map"></div>
+</div>
 
-<h2>Sacred Landscapes of Central India</h2>
-
-<div id="map"></div>
-
-<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 <script>
-const map = L.map('map').setView([23.5, 78.5], 6);
+    // --- CONFIGURATION SECTION ---
+    // You can add or modify locations here.
+    const locations = [
+        {
+            name: "Ramtek",
+            coords: [21.3888, 79.3300],
+            url: "/blog/ramtek"
+        },
+        {
+            name: "Amarkantak",
+            coords: [22.6711, 81.7516],
+            url: "/blog/amarkantak"
+        },
+        {
+            name: "Vidisha",
+            coords: [23.5251, 77.8147],
+            url: "/blog/vidisha"
+        },
+        {
+            name: "Udayagiri",
+            coords: [23.5350, 77.7800],
+            url: "/blog/udayagiri"
+        },
+        {
+            name: "Ujjain",
+            coords: [23.1760, 75.7885],
+            url: "/blog/ujjain"
+        }
+    ];
 
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-  attribution: '© OpenStreetMap'
-}).addTo(map);
+    // Initialize map centered around Central India
+    const map = L.map('map').setView([22.5000, 78.5000], 6);
 
-const places = [
-  {
-    name: "Ujjain",
-    coords: [23.1765, 75.7885],
-    link: "/blog/ujjain",
-    text: "City of Mahakala and celestial time"
-  },
-  {
-    name: "Vidisha",
-    coords: [23.5251, 77.8081],
-    link: "/blog/vidisha",
-    text: "Gateway to Gupta sacred landscapes"
-  },
-  {
-    name: "Udayagiri",
-    coords: [23.5244, 77.7296],
-    link: "/blog/udayagiri",
-    text: "Caves of cosmic kingship"
-  },
-  {
-    name: "Amarkantak",
-    coords: [22.6749, 81.7596],
-    link: "/blog/amarkantak",
-    text: "Source of the Narmada"
-  },
-  {
-    name: "Ramtek",
-    coords: [21.3972, 79.3271],
-    link: "/blog/ramtek",
-    text: "Land of Rama’s exile"
-  }
-];
+    // Add OpenStreetMap Tile Layer
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
 
-places.forEach(p => {
-  L.marker(p.coords).addTo(map)
-    .bindPopup(`
-      <strong>${p.name}</strong><br>
-      <em>${p.text}</em><br><br>
-      <a href="${p.link}">Explore →</a>
-    `);
-});
+    // Loop through locations to create markers
+    locations.forEach(place => {
+        // Create Marker
+        const marker = L.marker(place.coords).addTo(map);
+
+        // Create HTML content for the popup
+        const popupContent = `
+            <div class="custom-popup">
+                <strong>${place.name}</strong>
+                <a href="${place.url}" class="popup-link">Explore History &rarr;</a>
+            </div>
+        `;
+
+        // Bind popup to marker
+        marker.bindPopup(popupContent);
+
+        // Optional: Show name on hover (Tooltip)
+        marker.bindTooltip(place.name, {
+            direction: 'top',
+            offset: [0, -10]
+        });
+    });
+
+    // Fix for WordPress: Ensure map renders correctly if it's inside a hidden tab or resize
+    window.addEventListener('load', function() {
+        setTimeout(function() {
+            map.invalidateSize();
+        }, 500);
+    });
 </script>
-
-</body>
-</html>
