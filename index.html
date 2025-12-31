@@ -7,6 +7,43 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 
 <style>
+    /* --- Parchment Texture Overlay (No External Images) --- */
+
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+
+    /* Layered texture simulation */
+    background:
+        radial-gradient(circle at 20% 20%, rgba(255,255,255,0.08), transparent 40%),
+        radial-gradient(circle at 80% 30%, rgba(0,0,0,0.08), transparent 45%),
+        radial-gradient(circle at 50% 80%, rgba(0,0,0,0.06), transparent 50%),
+        repeating-linear-gradient(
+            0deg,
+            rgba(255,255,255,0.015),
+            rgba(255,255,255,0.015) 1px,
+            transparent 1px,
+            transparent 3px
+        ),
+        linear-gradient(
+            to bottom,
+            #2a241d,
+            #1e1b18
+        );
+
+    mix-blend-mode: overlay;
+    opacity: 0.85;
+}
+
+/* Ensure content stays above parchment */
+#container, h1 {
+    position: relative;
+    z-index: 1;
+}
+
 body {
     margin: 0;
     background: #1e1b18;
