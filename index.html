@@ -4,8 +4,9 @@
 <meta charset="UTF-8">
 <title>Meghadutam – The Cloud’s Journey</title>
 
-<!-- MapLibre GL CSS -->
+<!-- MapLibre GL JS -->
 <link href="https://unpkg.com/maplibre-gl@2.5.0/dist/maplibre-gl.css" rel="stylesheet" />
+<script src="https://unpkg.com/maplibre-gl@2.5.0/dist/maplibre-gl.js"></script>
 
 <style>
 html, body {
@@ -69,8 +70,7 @@ html, body {
     padding: 22px;
     box-shadow: 0 18px 40px rgba(0,0,0,0.6);
     color: #e6dccf;
-    z-index: 20;
-    pointer-events: auto;
+    z-index: 10;
     animation: fadeIn 0.6s ease;
 }
 
@@ -150,42 +150,29 @@ html, body {
 <div id="map"></div>
 <div id="panel"></div>
 
-<!-- MapLibre GL JS -->
-<script src="https://unpkg.com/maplibre-gl@2.5.0/dist/maplibre-gl.js"></script>
-
 <script>
-// ==== MAP INITIALIZATION ====
+// Initialize MapLibre map
 const map = new maplibregl.Map({
     container: 'map',
-    style: 'https://api.maptiler.com/maps/basic/style.json?key=2KLPs3v6SocVNHhNtM9X', 
+    style: 'https://api.maptiler.com/maps/streets-v4-dark/style.json?key=2KLPs3v6SocVNHhNtM9X',
     center: [78.5, 23.5],
     zoom: 5
 });
+map.addControl(new maplibregl.NavigationControl());
 
-// Hide labels & boundaries for a clean chunk of land
-map.on('style.load', () => {
-    const layers = map.getStyle().layers;
-    layers.forEach(layer => {
-        if (layer.type === 'symbol' || layer.id.includes('admin') || layer.id.includes('boundary')) {
-            map.setLayoutProperty(layer.id, 'visibility', 'none');
-        }
-    });
-});
-
-// ==== LOCATIONS ====
+// Locations
 const locations = [
     {
         name: "Ramagiri",
-        coords: [79.3271, 21.3972], // [lng, lat]
+        coords: [79.3271, 21.3972],
         text: "The launchpad of the cloud's journey. Read the blog post to know more.",
         link: "/blog/ramtek",
         image: "https://upload.wikimedia.org/wikipedia/commons/1/1e/Ramtek_Temple.jpg"
-    },
+    }
 ];
 
 const panel = document.getElementById("panel");
 
-// ==== PANEL FUNCTIONS ====
 function showPanel(html) {
     panel.innerHTML = html;
     panel.style.display = "block";
@@ -212,20 +199,20 @@ function showPlace(index) {
         <a class="primary-btn" href="${p.link}">Read More</a>
         <div class="secondary-btn" onclick="showPlace(${(index + 1) % locations.length})">Next →</div>
     `);
-    map.flyTo({ center: p.coords, zoom: 10 });
+    map.flyTo({ center: p.coords, zoom: 8, speed: 0.8 });
 }
 
-// ==== ADD MARKERS ====
+// Add custom pins
 locations.forEach((place, i) => {
     const el = document.createElement('div');
     el.className = 'custom-pin';
-    new maplibregl.Marker(el)
+    const marker = new maplibregl.Marker(el)
         .setLngLat(place.coords)
         .addTo(map);
+
     el.addEventListener('click', () => showPlace(i));
 });
 
-// ==== INITIAL SCREEN ====
 showWelcome();
 </script>
 
