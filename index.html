@@ -55,26 +55,6 @@ html, body {
     z-index: 2;
 }
 
-/* ==== CLOUDS ANIMATION ==== */
-#clouds {
-    position: absolute;
-    inset: 0;
-    z-index: 3;
-    pointer-events: none;
-    background: 
-        radial-gradient(circle at 20% 20%, rgba(255,255,255,0.08), transparent 40%),
-        radial-gradient(circle at 80% 40%, rgba(255,255,255,0.05), transparent 35%),
-        radial-gradient(circle at 40% 70%, rgba(255,255,255,0.06), transparent 35%),
-        radial-gradient(circle at 70% 80%, rgba(255,255,255,0.07), transparent 30%);
-    background-size: 200% 200%;
-    animation: drift 80s linear infinite;
-}
-
-@keyframes drift {
-    0% { background-position: 0 0, 0 0, 0 0, 0 0; }
-    100% { background-position: -1000px -500px, 800px 400px, -600px 700px, 900px -300px; }
-}
-
 /* ==== INFO PANEL ==== */
 #panel {
     position: absolute;
@@ -166,7 +146,6 @@ html, body {
 
 <div id="title">Meghadutam: The Cloud’s Journey</div>
 <div id="map"></div>
-<div id="clouds"></div>
 <div id="panel"></div>
 
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
