@@ -3,9 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <title>Meghadutam – The Cloud’s Journey</title>
-
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-
 <style>
 html, body {
     margin: 0;
@@ -15,7 +13,6 @@ html, body {
     overflow: hidden;
 }
 
-/* ==== TITLE OVER MAP ==== */
 #title {
     position: absolute;
     top: 20px;
@@ -29,53 +26,31 @@ html, body {
     text-shadow: 1px 1px 2px rgba(255,255,255,0.3);
 }
 
-/* ==== MAP FULLSCREEN ==== */
 #map {
     position: absolute;
     inset: 0;
     z-index: 1;
 }
 
-/* ==== PARCHMENT OVERLAY ==== */
-#map::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background:
-        radial-gradient(circle at 25% 30%, rgba(255,255,255,0.06), transparent 40%),
-        radial-gradient(circle at 75% 70%, rgba(255,255,255,0.04), transparent 45%),
-        repeating-linear-gradient(
-            45deg,
-            rgba(255,255,255,0.015),
-            rgba(255,255,255,0.015) 2px,
-            transparent 2px,
-            transparent 6px
-        );
-    pointer-events: none;
-    z-index: 2;
-}
-
-/* ==== CLOUDS ANIMATION ==== */
 #clouds {
     position: absolute;
     inset: 0;
-    z-index: 3;
+    z-index: 5; /* above map and panel */
     pointer-events: none;
-    background: 
-        radial-gradient(circle at 20% 20%, rgba(255,255,255,0.08), transparent 40%),
-        radial-gradient(circle at 80% 40%, rgba(255,255,255,0.05), transparent 35%),
-        radial-gradient(circle at 40% 70%, rgba(255,255,255,0.06), transparent 35%),
-        radial-gradient(circle at 70% 80%, rgba(255,255,255,0.07), transparent 30%);
-    background-size: 200% 200%;
-    animation: drift 80s linear infinite;
+    background:
+        radial-gradient(circle at 20% 30%, rgba(255,255,255,0.08), transparent 40%),
+        radial-gradient(circle at 60% 20%, rgba(255,255,255,0.05), transparent 40%),
+        radial-gradient(circle at 80% 60%, rgba(255,255,255,0.06), transparent 35%),
+        radial-gradient(circle at 40% 70%, rgba(255,255,255,0.07), transparent 30%);
+    background-size: 300% 300%;
+    animation: drift 100s linear infinite;
 }
 
 @keyframes drift {
     0% { background-position: 0 0, 0 0, 0 0, 0 0; }
-    100% { background-position: -1000px -500px, 800px 400px, -600px 700px, 900px -300px; }
+    100% { background-position: -1200px 800px, 900px -700px, -1000px 600px, 800px -500px; }
 }
 
-/* ==== INFO PANEL ==== */
 #panel {
     position: absolute;
     right: 28px;
@@ -112,7 +87,6 @@ html, body {
     box-shadow: 0 4px 10px rgba(0,0,0,0.4);
 }
 
-/* Buttons */
 .primary-btn {
     display: block;
     margin-top: 16px;
@@ -126,9 +100,7 @@ html, body {
     transition: background 0.3s ease;
 }
 
-.primary-btn:hover {
-    background: #e1c48a;
-}
+.primary-btn:hover { background: #e1c48a; }
 
 .secondary-btn {
     display: inline-block;
@@ -139,7 +111,6 @@ html, body {
     cursor: pointer;
 }
 
-/* Pins */
 .custom-pin {
     width: 18px;
     height: 18px;
@@ -161,7 +132,6 @@ html, body {
 }
 </style>
 </head>
-
 <body>
 
 <div id="title">Meghadutam: The Cloud’s Journey</div>
@@ -170,7 +140,6 @@ html, body {
 <div id="panel"></div>
 
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-
 <script>
 const map = L.map('map', { zoomControl: false }).setView([23.5, 78.5], 6);
 
@@ -179,41 +148,11 @@ L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
 }).addTo(map);
 
 const locations = [
-    {
-        name: "Ramagiri",
-        coords: [21.3972, 79.3271],
-        text: "A hill of exile, memory, and epic resonance.",
-        link: "/blog/ramtek",
-        image: "https://as2.ftcdn.net/jpg/05/01/19/79/1000_F_501197913_jyVGqK5uSWraWXXHbSIXmbCiijJmJCMQ.jpg"
-    },
-    {
-        name: "Amrakuta",
-        coords: [22.6749, 81.7596],
-        text: "Source of the Narmada, where rivers are born of stone.",
-        link: "/blog/amarkantak",
-        image: "https://upload.wikimedia.org/wikipedia/commons/4/48/Amarkantak.jpg"
-    },
-    {
-        name: "Vidisha",
-        coords: [23.5251, 77.8081],
-        text: "Gateway to the Gupta sacred landscape and early temple art.",
-        link: "/blog/vidisha",
-        image: "https://upload.wikimedia.org/wikipedia/commons/7/7c/Vidisha_Udayagiri.jpg"
-    },
-    {
-        name: "Nichai",
-        coords: [23.5244, 77.7296],
-        text: "Caves carved with cosmic symbolism and royal devotion.",
-        link: "/blog/udayagiri",
-        image: "https://upload.wikimedia.org/wikipedia/commons/2/2b/Udayagiri_caves.jpg"
-    },
-    {
-        name: "Ujjayini",
-        coords: [23.1765, 75.7885],
-        text: "The city of Mahākāla, where time itself is worshipped.",
-        link: "/blog/ujjain",
-        image: "https://upload.wikimedia.org/wikipedia/commons/9/9f/Mahakaleshwar_Temple.jpg"
-    }
+    { name: "Ramagiri", coords: [21.3972, 79.3271], text: "A hill of exile.", link: "/blog/ramtek", image: "https://as2.ftcdn.net/jpg/05/01/19/79/1000_F_501197913_jyVGqK5uSWraWXXHbSIXmbCiijJmJCMQ.jpg" },
+    { name: "Amrakuta", coords: [22.6749, 81.7596], text: "Source of Narmada.", link: "/blog/amarkantak", image: "https://upload.wikimedia.org/wikipedia/commons/4/48/Amarkantak.jpg" },
+    { name: "Vidisha", coords: [23.5251, 77.8081], text: "Gateway to Gupta art.", link: "/blog/vidisha", image: "https://upload.wikimedia.org/wikipedia/commons/7/7c/Vidisha_Udayagiri.jpg" },
+    { name: "Nichai", coords: [23.5244, 77.7296], text: "Caves with cosmic symbolism.", link: "/blog/udayagiri", image: "https://upload.wikimedia.org/wikipedia/commons/2/2b/Udayagiri_caves.jpg" },
+    { name: "Ujjayini", coords: [23.1765, 75.7885], text: "City of Mahākāla.", link: "/blog/ujjain", image: "https://upload.wikimedia.org/wikipedia/commons/9/9f/Mahakaleshwar_Temple.jpg" }
 ];
 
 const panel = document.getElementById("panel");
@@ -226,10 +165,7 @@ function showPanel(html) {
 function showWelcome() {
     showPanel(`
         <h2>Svāgataṃ</h2>
-        <p>
-        Follow the path of the cloud messenger across sacred landscapes,
-        where poetry, memory, and geography converge.
-        </p>
+        <p>Follow the path of the cloud messenger across sacred landscapes.</p>
         <div class="primary-btn" onclick="showPlace(0)">Enter the Map</div>
     `);
 }
@@ -241,17 +177,12 @@ function showPlace(index) {
         <h2>${p.name}</h2>
         <p>${p.text}</p>
         <a class="primary-btn" href="${p.link}">Read More</a>
-        <div class="secondary-btn" onclick="showPlace(${(index + 1) % locations.length})">Next →</div>
+        <div class="secondary-btn" onclick="showPlace(${(index+1) % locations.length})">Next →</div>
     `);
     map.panTo(p.coords, { animate: true, duration: 1 });
 }
 
-const pinIcon = L.divIcon({
-    className: '',
-    html: '<div class="custom-pin"></div>',
-    iconSize: [18, 18],
-    iconAnchor: [9, 18]
-});
+const pinIcon = L.divIcon({ className: '', html: '<div class="custom-pin"></div>', iconSize: [18,18], iconAnchor: [9,18] });
 
 locations.forEach((place, i) => {
     const marker = L.marker(place.coords, { icon: pinIcon }).addTo(map);
