@@ -1,168 +1,152 @@
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Meghadutam – The Cloud’s Journey</title>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 
 <style>
-    /* --- STYLING SECTION --- */
-    /* Adjust the fonts and colors here to match your site's theme */
-    :root {
-        --map-accent: #8b4513; /* Deep Bronze/Sienna */
-        --map-bg: #fdfaf1;    /* Parchment-like background */
-        --map-text: #2c1e14;
-    }
-
-    .historical-map-container {
-        font-family: 'Georgia', serif;
-        max-width: 1000px;
-        margin: 20px auto;
-        padding: 15px;
-        background-color: var(--map-bg);
-        border: 1px solid #d4c5a9;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-        border-radius: 8px;
-    }
-
-    .map-header {
-        text-align: center;
-        margin-bottom: 15px;
-    }
-
-    .map-header h2 {
-        color: var(--map-accent);
+    body {
         margin: 0;
-        font-variant: small-caps;
+        background: #f4efe6;
+        font-family: "Georgia", "Times New Roman", serif;
+        color: #3b352f;
+    }
+
+    h1 {
+        text-align: center;
+        padding: 20px 0 10px;
+        font-weight: normal;
         letter-spacing: 1px;
+        color: #5b4636;
     }
 
-    /* Map Height and Border */
+    #container {
+        display: flex;
+        height: 80vh;
+        margin: 0 5%;
+        gap: 20px;
+    }
+
     #map {
-        height: 500px;
-        width: 100%;
-        border: 2px solid #a89370;
-        border-radius: 4px;
-        z-index: 1;
+        flex: 2;
+        border-radius: 14px;
+        border: 2px solid #c9b8a2;
     }
 
-    /* Making the OSM tiles look more "Historical/Antique" */
-    .leaflet-tile-pane {
-        filter: sepia(0.6) hue-rotate(-15deg) contrast(0.9) brightness(1.1);
+    #info {
+        flex: 1;
+        background: #faf6ef;
+        border: 1px solid #d6c7b2;
+        border-radius: 14px;
+        padding: 20px;
+        box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
+        font-size: 16px;
+        line-height: 1.6;
     }
 
-    /* Popup Styling */
-    .custom-popup .leaflet-popup-content-wrapper {
-        background: #fffdf5;
-        color: var(--map-text);
-        border-radius: 0;
-        border-left: 4px solid var(--map-accent);
+    #info h2 {
+        margin-top: 0;
+        color: #6b4f3b;
+        font-weight: normal;
     }
 
-    .custom-popup .leaflet-popup-content {
-        font-size: 1.1rem;
-        font-weight: bold;
-    }
-
-    .popup-link {
-        display: block;
-        margin-top: 5px;
-        color: var(--map-accent);
+    .link {
+        display: inline-block;
+        margin-top: 10px;
+        color: #7a5c3e;
         text-decoration: none;
-        font-size: 0.9rem;
-        font-style: italic;
+        border-bottom: 1px solid #7a5c3e;
     }
 
-    .popup-link:hover {
-        text-decoration: underline;
+    .link:hover {
+        color: #4e3828;
+        border-color: #4e3828;
     }
 
-    /* Marker Hover Animation */
     .leaflet-marker-icon {
-        transition: transform 0.2s ease-out;
-    }
-    .leaflet-marker-icon:hover {
-        transform: scale(1.2) translateY(-5px) !important;
-    }
-
-    /* Responsive adjustments */
-    @media (max-width: 768px) {
-        #map { height: 400px; }
-        .map-header h2 { font-size: 1.5rem; }
+        filter: sepia(40%) saturate(80%) hue-rotate(10deg);
     }
 </style>
+</head>
 
-<div class="historical-map-container">
-    <div class="map-header">
-        <h2>Sacred Landscapes of Central India</h2>
-    </div>
-    
+<body>
+
+<h1>Meghadutam — The Cloud’s Journey</h1>
+
+<div id="container">
     <div id="map"></div>
+    <div id="info">
+        <h2>Welcome</h2>
+        <p>
+            Follow the imagined path of the cloud as it moves through sacred landscapes of central India.
+            Click a place on the map to read its story.
+        </p>
+    </div>
 </div>
 
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
 <script>
-    // --- CONFIGURATION SECTION ---
-    // You can add or modify locations here.
-    const locations = [
-        {
-            name: "Ramtek",
-            coords: [21.3888, 79.3300],
-            url: "/blog/ramtek"
-        },
-        {
-            name: "Amarkantak",
-            coords: [22.6711, 81.7516],
-            url: "/blog/amarkantak"
-        },
-        {
-            name: "Vidisha",
-            coords: [23.5251, 77.8147],
-            url: "/blog/vidisha"
-        },
-        {
-            name: "Udayagiri",
-            coords: [23.5350, 77.7800],
-            url: "/blog/udayagiri"
-        },
-        {
-            name: "Ujjain",
-            coords: [23.1760, 75.7885],
-            url: "/blog/ujjain"
-        }
-    ];
+const map = L.map('map').setView([23.5, 78.5], 6);
 
-    // Initialize map centered around Central India
-    const map = L.map('map').setView([22.5000, 78.5000], 6);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap contributors'
+}).addTo(map);
 
-    // Add OpenStreetMap Tile Layer
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; OpenStreetMap contributors'
+const locations = [
+    {
+        name: "Ujjain",
+        coords: [23.1765, 75.7885],
+        text: "The city of Mahākāla, where time itself is worshipped.",
+        link: "/blog/ujjain"
+    },
+    {
+        name: "Vidisha",
+        coords: [23.5251, 77.8081],
+        text: "Gateway to the Gupta sacred landscape and early temple art.",
+        link: "/blog/vidisha"
+    },
+    {
+        name: "Udayagiri",
+        coords: [23.5244, 77.7296],
+        text: "Caves carved with cosmic symbolism and royal devotion.",
+        link: "/blog/udayagiri"
+    },
+    {
+        name: "Amarkantak",
+        coords: [22.6749, 81.7596],
+        text: "Source of the Narmada, where rivers are born of stone.",
+        link: "/blog/amarkantak"
+    },
+    {
+        name: "Ramtek",
+        coords: [21.3972, 79.3271],
+        text: "A hill of exile, memory, and epic remembrance.",
+        link: "/blog/ramtek"
+    }
+];
+
+locations.forEach(place => {
+    const marker = L.circleMarker(place.coords, {
+        radius: 7,
+        color: "#6b543e",
+        fillColor: "#bfa98a",
+        fillOpacity: 0.9,
+        weight: 1
     }).addTo(map);
 
-    // Loop through locations to create markers
-    locations.forEach(place => {
-        // Create Marker
-        const marker = L.marker(place.coords).addTo(map);
-
-        // Create HTML content for the popup
-        const popupContent = `
-            <div class="custom-popup">
-                <strong>${place.name}</strong>
-                <a href="${place.url}" class="popup-link">Explore History &rarr;</a>
-            </div>
+    marker.on("click", () => {
+        document.getElementById("info").innerHTML = `
+            <h2>${place.name}</h2>
+            <p>${place.text}</p>
+            <a class="link" href="${place.link}">Read more →</a>
         `;
-
-        // Bind popup to marker
-        marker.bindPopup(popupContent);
-
-        // Optional: Show name on hover (Tooltip)
-        marker.bindTooltip(place.name, {
-            direction: 'top',
-            offset: [0, -10]
-        });
     });
-
-    // Fix for WordPress: Ensure map renders correctly if it's inside a hidden tab or resize
-    window.addEventListener('load', function() {
-        setTimeout(function() {
-            map.invalidateSize();
-        }, 500);
-    });
+});
 </script>
+
+</body>
+</html>
+
