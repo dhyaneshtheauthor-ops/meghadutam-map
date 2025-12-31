@@ -7,8 +7,17 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 
 <style>
-    /* --- Parchment Texture Overlay (No External Images) --- */
+/* ===== BASE STYLES ===== */
+body {
+    margin: 0;
+    background: #1e1b18;
+    font-family: "Georgia", "Times New Roman", serif;
+    color: #e6dccf;
+    position: relative;
+    overflow-x: hidden;
+}
 
+/* ===== PARCHMENT OVERLAY ===== */
 body::before {
     content: "";
     position: fixed;
@@ -16,10 +25,9 @@ body::before {
     pointer-events: none;
     z-index: 0;
 
-    /* Layered texture simulation */
     background:
-        radial-gradient(circle at 20% 20%, rgba(255,255,255,0.08), transparent 40%),
-        radial-gradient(circle at 80% 30%, rgba(0,0,0,0.08), transparent 45%),
+        radial-gradient(circle at 20% 20%, rgba(255,255,255,0.06), transparent 45%),
+        radial-gradient(circle at 80% 30%, rgba(0,0,0,0.08), transparent 55%),
         radial-gradient(circle at 50% 80%, rgba(0,0,0,0.06), transparent 50%),
         repeating-linear-gradient(
             0deg,
@@ -30,45 +38,34 @@ body::before {
         ),
         linear-gradient(
             to bottom,
-            #2a241d,
+            #2b241c,
             #1e1b18
         );
 
     mix-blend-mode: overlay;
-    opacity: 0.85;
 }
 
-/* Ensure content stays above parchment */
-#container, h1 {
-    position: relative;
-    z-index: 1;
-}
-
-body {
-    margin: 0;
-    background: #1e1b18;
-    font-family: "Georgia", "Times New Roman", serif;
-    color: #e6dccf;
-}
-
+/* ===== HEADER ===== */
 h1 {
     text-align: center;
     padding: 20px 0 10px;
     font-weight: normal;
     letter-spacing: 1.5px;
     color: #d6c2a3;
+    position: relative;
+    z-index: 1;
 }
 
-/* === LAYOUT === */
-
+/* ===== LAYOUT ===== */
 #container {
     display: flex;
     height: 80vh;
     margin: 0 5%;
     gap: 20px;
+    position: relative;
+    z-index: 1;
 }
 
-/* Map */
 #map {
     flex: 2;
     border-radius: 16px;
@@ -76,7 +73,6 @@ h1 {
     background: #efe7d6;
 }
 
-/* Sidebar */
 #info {
     flex: 1;
     display: flex;
@@ -91,6 +87,7 @@ h1 {
     line-height: 1.65;
 }
 
+/* ===== CONTENT ===== */
 #info h2 {
     margin-top: 0;
     color: #d8c3a5;
@@ -120,20 +117,15 @@ h1 {
 
 .next-button {
     margin-top: 15px;
-    padding: 10px 18px;
+    padding: 8px 16px;
     background: #bfa57a;
     color: #3b2f24;
     border-radius: 6px;
     cursor: pointer;
     font-weight: bold;
-    display: inline-block;
 }
 
-.next-button:hover {
-    background: #d0b58c;
-}
-
-/* Pin */
+/* ===== MAP PIN ===== */
 .custom-pin {
     width: 18px;
     height: 18px;
@@ -154,26 +146,14 @@ h1 {
     border-radius: 50%;
 }
 
-/* ---------- MOBILE ADAPTATION ---------- */
+/* ===== RESPONSIVE ===== */
 @media (max-width: 900px) {
     #container {
         flex-direction: column;
         height: auto;
     }
-
     #map {
         height: 45vh;
-        width: 100%;
-    }
-
-    #info {
-        height: auto;
-        border-radius: 0 0 16px 16px;
-    }
-
-    h1 {
-        font-size: 1.4rem;
-        padding: 14px 0;
     }
 }
 </style>
