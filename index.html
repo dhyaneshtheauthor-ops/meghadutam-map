@@ -9,9 +9,9 @@
 <style>
 body {
     margin: 0;
-    background: #f5f1e8;
+    background: #1e1b18;
     font-family: "Georgia", "Times New Roman", serif;
-    color: #3b2f24;
+    color: #e6dccf;
 }
 
 h1 {
@@ -19,7 +19,7 @@ h1 {
     padding: 20px 0 10px;
     font-weight: normal;
     letter-spacing: 1.5px;
-    color: #7a5c42;
+    color: #d6c2a3;
 }
 
 #container {
@@ -32,38 +32,54 @@ h1 {
 #map {
     flex: 2;
     border-radius: 16px;
-    border: 1px solid #d0c2b0;
-    min-height: 80vh;
+    border: 1px solid #4a3c2c;
+    background: #efe7d6;
 }
 
 #info {
     flex: 1;
-    background: #ede5db;
-    border: 1px solid #d0c2b0;
+    background: #26221e;
+    border: 1px solid #3d3226;
     border-radius: 16px;
     padding: 22px;
-    box-shadow: inset 0 0 12px rgba(0,0,0,0.1);
+    box-shadow: inset 0 0 12px rgba(0,0,0,0.4);
     font-size: 16px;
     line-height: 1.65;
 }
 
 #info h2 {
     margin-top: 0;
-    color: #7a5c42;
+    color: #d8c3a5;
     font-weight: normal;
 }
 
 .link {
     display: inline-block;
     margin-top: 12px;
-    color: #a07c56;
+    color: #c9ab7a;
     text-decoration: none;
-    border-bottom: 1px solid #a07c56;
+    border-bottom: 1px solid #c9ab7a;
 }
 
 .link:hover {
-    color: #c09e70;
-    border-color: #c09e70;
+    color: #e0c896;
+    border-color: #e0c896;
+}
+
+.next-button {
+    display: inline-block;
+    margin-top: 15px;
+    padding: 6px 12px;
+    background: #bfa57a;
+    color: #3b2f24;
+    text-decoration: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.next-button:hover {
+    background: #d0b58c;
 }
 
 /* Custom pin */
@@ -74,7 +90,7 @@ h1 {
     border-radius: 50% 50% 50% 0;
     transform: rotate(-45deg);
     position: relative;
-    box-shadow: 0 0 6px rgba(0,0,0,0.3);
+    box-shadow: 0 0 6px rgba(0,0,0,0.6);
 }
 
 .custom-pin::after {
@@ -99,7 +115,7 @@ h1 {
     <div id="info">
         <h2>Welcome</h2>
         <p>
-            Follow the journey of the cloud across sacred landscapes,
+            Follow the imagined path of the cloud across sacred landscapes,
             where poetry and geography converge.
         </p>
     </div>
@@ -108,17 +124,13 @@ h1 {
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
 <script>
-// Initialize map
-const map = L.map('map', { zoomControl: false }).setView([23.0, 78.0], 6);
+const map = L.map('map', { zoomControl: false }).setView([23.5, 78.5], 6);
 
-// Light-themed map
-L.tileLayer('https://{s}.basemaps.cartocdn.com/voyager/{z}/{x}/{y}{r}.png', {
-    attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
-    subdomains: 'abcd',
-    maxZoom: 19
+/* Light parchment-style map */
+L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+    attribution: '© OpenStreetMap'
 }).addTo(map);
 
-// Locations
 const locations = [
     { name: "Ramtek", coords: [21.3972, 79.3271], text: "A hill of exile, memory, and epic resonance.", link: "/blog/ramtek" },
     { name: "Amarkantak", coords: [22.6749, 81.7596], text: "Source of the Narmada, where rivers are born of stone.", link: "/blog/amarkantak" },
@@ -128,78 +140,36 @@ const locations = [
 ];
 
 // Custom pins
-const pinIcon = L.divIcon({
-    className: '',
-    html: '<div class="custom-pin"></div>',
-    iconSize: [18, 18],
-    iconAnchor: [9, 18]
-});
+const pinIcon = L.divIcon({ className: '', html: '<div class="custom-pin"></div>', iconSize: [18,18], iconAnchor: [9,18] });
 
-// Add markers and click info
+// Add markers with click-to-sidebar functionality
 locations.forEach(place => {
     const marker = L.marker(place.coords, { icon: pinIcon }).addTo(map);
-    marker.on("click", () => {
-        document.getElementById("info").innerHTML = `
-            <h2>${place.name}</h2>
-            <p>${place.text}</p>
-            <a class="link" href="${place.link}">Read more →</a>
-        `;
-    });
+    marker.on("click", () => showSidebar(place));
 });
 
-// Cloud animation
-const journeyCoords = locations.map(l => l.coords);
+// Current location index for "Next →" button
+let currentIndex = 0;
 
-// Draw soft dashed polyline path
-const cloudPath = L.polyline(journeyCoords, {
-    color: '#f0e6d2',
-    weight: 3,
-    opacity: 0.5,
-    dashArray: '8, 10'
-}).addTo(map);
+// Function to update sidebar
+function showSidebar(place) {
+    currentIndex = locations.indexOf(place);
+    document.getElementById("info").innerHTML = `
+        <h2>${place.name}</h2>
+        <p>${place.text}</p>
+        <a class="link" href="${place.link}">Read more →</a><br>
+        <span class="next-button" id="nextBtn">Next →</span>
+    `;
 
-// Create cloud icon
-const cloudIcon = L.divIcon({
-    className: '',
-    html: '<div style="width:24px;height:24px;background:#ffffff;border-radius:50%;opacity:0.8;box-shadow:0 0 12px rgba(255,255,255,0.5);"></div>',
-    iconSize: [24, 24],
-    iconAnchor: [12, 12]
-});
-
-// Add cloud marker
-const cloudMarker = L.marker(journeyCoords[0], {icon: cloudIcon}).addTo(map);
-
-// Animate cloud along polyline with easing
-let progress = 0;
-const speed = 0.0015; // slower = smoother movement
-
-function animateCloud() {
-    progress += speed;
-    if(progress > 1) progress = 0; // loop
-
-    const latlng = getLatLngAtProgress(cloudPath, progress);
-    cloudMarker.setLatLng(latlng);
-
-    requestAnimationFrame(animateCloud);
+    // Add event listener to next button
+    document.getElementById("nextBtn").onclick = () => {
+        currentIndex = (currentIndex + 1) % locations.length;
+        showSidebar(locations[currentIndex]);
+    };
 }
 
-// Helper to interpolate LatLng along the path
-function getLatLngAtProgress(polyline, t) {
-    const latlngs = polyline.getLatLngs();
-    const total = latlngs.length - 1;
-    const index = Math.floor(t * total);
-    const ratio = (t * total) - index;
-
-    const from = latlngs[index];
-    const to = latlngs[Math.min(index + 1, total)];
-
-    const lat = from.lat + (to.lat - from.lat) * ratio;
-    const lng = from.lng + (to.lng - from.lng) * ratio;
-
-    return [lat, lng];
-}
-
-animateCloud();
+// Optionally, start with first location
+// showSidebar(locations[0]);
 </script>
 
 </body>
