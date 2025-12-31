@@ -1,198 +1,143 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Meghadutam – The Cloud’s Journey</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Meghadūtam: The Cloud’s Journey</title>
 
-<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+<!-- Leaflet -->
+<link
+  rel="stylesheet"
+  href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+/>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 <style>
-body {
-    margin: 0;
-    background: #1e1b18;
-    font-family: "Georgia", "Times New Roman", serif;
-    color: #e6dccf;
-}
+    body {
+        margin: 0;
+        background: #0f0f14;
+        font-family: "Inter", "Segoe UI", sans-serif;
+        color: #eaeaea;
+    }
 
-h1 {
-    text-align: center;
-    padding: 20px 0 10px;
-    font-weight: normal;
-    letter-spacing: 1.5px;
-    color: #d6c2a3;
-}
+    #map {
+        height: 100vh;
+        width: 100%;
+    }
 
-#container {
-    display: flex;
-    height: 80vh;
-    margin: 0 5%;
-    gap: 20px;
-}
+    .leaflet-popup-content-wrapper {
+        background: #16161d;
+        color: #f1f1f1;
+        border-radius: 12px;
+        box-shadow: 0 0 20px rgba(255,255,255,0.08);
+    }
 
-#map {
-    flex: 2;
-    border-radius: 16px;
-    border: 1px solid #4a3c2c;
-    background: #efe7d6;
-}
+    .leaflet-popup-tip {
+        background: #16161d;
+    }
 
-#info {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    background: #26221e;
-    border: 1px solid #3d3226;
-    border-radius: 16px;
-    padding: 22px;
-    box-shadow: inset 0 0 12px rgba(0,0,0,0.4);
-    font-size: 16px;
-    line-height: 1.65;
-}
+    .popup-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-bottom: 6px;
+    }
 
-#info h2 {
-    margin-top: 0;
-    color: #d8c3a5;
-    font-weight: normal;
-}
+    .popup-text {
+        font-size: 0.9rem;
+        opacity: 0.85;
+        margin-bottom: 8px;
+    }
 
-.link {
-    display: inline-block;
-    margin-top: 12px;
-    color: #c9ab7a;
-    text-decoration: none;
-    border-bottom: 1px solid #c9ab7a;
-}
+    .popup-link {
+        color: #8ecbff;
+        text-decoration: none;
+        font-size: 0.9rem;
+    }
 
-.link:hover {
-    color: #e0c896;
-    border-color: #e0c896;
-}
+    .popup-link:hover {
+        text-decoration: underline;
+    }
 
-.next-button {
-    display: inline-block;
-    margin-top: 15px;
-    padding: 8px 16px;
-    background: #bfa57a;
-    color: #3b2f24;
-    text-decoration: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-weight: bold;
-    align-self: center;
-}
-
-.next-button:hover {
-    background: #d0b58c;
-}
-
-/* Custom pin */
-.custom-pin {
-    width: 18px;
-    height: 18px;
-    background: #bfa57a;
-    border-radius: 50% 50% 50% 0;
-    transform: rotate(-45deg);
-    position: relative;
-    box-shadow: 0 0 6px rgba(0,0,0,0.6);
-}
-
-.custom-pin::after {
-    content: "";
-    width: 8px;
-    height: 8px;
-    background: #3b2f24;
-    position: absolute;
-    top: 5px;
-    left: 5px;
-    border-radius: 50%;
-}
+    .popup-image {
+        width: 100%;
+        border-radius: 6px;
+        margin-top: 6px;
+    }
 </style>
 </head>
 
 <body>
 
-<h1>Meghadutam — The Cloud’s Journey</h1>
-
-<div id="container">
-    <div id="map"></div>
-    <div id="info">
-        <!-- Sidebar content injected by JS -->
-    </div>
-</div>
-
-<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<div id="map"></div>
 
 <script>
-const map = L.map('map', { zoomControl: false }).setView([23.5, 78.5], 6);
+    // Initialize map
+    const map = L.map('map', {
+        zoomControl: true
+    }).setView([23.5, 78.5], 6);
 
-/* Light parchment-style map */
-L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-    attribution: '© OpenStreetMap'
-}).addTo(map);
+    // Dark map tiles
+    L.tileLayer(
+        'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
+        {
+            attribution: '&copy; OpenStreetMap contributors'
+        }
+    ).addTo(map);
 
-const locations = [
-    { name: "Ramagiri", coords: [21.3972, 79.3271], text: "A hill of exile, memory, and epic resonance.", link: "/blog/ramtek" },
-    { name: "Amrakuta", coords: [22.6749, 81.7596], text: "Source of the Narmada, where rivers are born of stone.", link: "/blog/amarkantak" },
-    { name: "Vidisha", coords: [23.5251, 77.8081], text: "Gateway to the Gupta sacred landscape and early temple art.", link: "/blog/vidisha" },
-    { name: "Nichai", coords: [23.5244, 77.7296], text: "Caves carved with cosmic symbolism and royal devotion.", link: "/blog/udayagiri" },
-    { name: "Ujjayini", coords: [23.1765, 75.7885], text: "The city of Mahākāla, where time itself is worshipped.", link: "/blog/ujjain" }
-];
+    // Location data
+    const locations = [
+        {
+            name: "Ramtek",
+            coords: [21.397, 79.327],
+            description: "Traditionally linked to Kalidasa’s Meghadūta and the poet’s contemplative exile.",
+            link: "https://yourwordpresssite.com/ramtek",
+            image: "https://via.placeholder.com/300x160?text=Ramtek"
+        },
+        {
+            name: "Amarkantak",
+            coords: [22.674, 81.759],
+            description: "Source of sacred rivers and a spiritual threshold in the cloud’s journey.",
+            link: "https://yourwordpresssite.com/amarkantak",
+            image: "https://via.placeholder.com/300x160?text=Amarkantak"
+        },
+        {
+            name: "Vidisha",
+            coords: [23.525, 77.808],
+            description: "Ancient crossroads of art, politics, and devotion.",
+            link: "https://yourwordpresssite.com/vidisha",
+            image: "https://via.placeholder.com/300x160?text=Vidisha"
+        },
+        {
+            name: "Udayagiri",
+            coords: [23.533, 77.740],
+            description: "Cave sanctuaries carved into living rock during the Gupta age.",
+            link: "https://yourwordpresssite.com/udayagiri",
+            image: "https://via.placeholder.com/300x160?text=Udayagiri"
+        },
+        {
+            name: "Ujjain",
+            coords: [23.179, 75.784],
+            description: "Sacred city of Mahākāla and the final resonance of the cloud.",
+            link: "https://yourwordpresssite.com/ujjain",
+            image: "https://via.placeholder.com/300x160?text=Ujjain"
+        }
+    ];
 
-// Custom pins
-const pinIcon = L.divIcon({ className: '', html: '<div class="custom-pin"></div>', iconSize: [18,18], iconAnchor: [9,18] });
-
-// Add markers
-locations.forEach(place => {
-    const marker = L.marker(place.coords, { icon: pinIcon }).addTo(map);
-    marker.on("click", () => showSidebar(place));
-});
-
-// Current location index for Next button
-let currentIndex = -1; // -1 indicates Welcome page
-
-function showSidebar(place) {
-    if(place === "welcome") {
-        currentIndex = -1;
-        document.getElementById("info").innerHTML = `
-            <div>
-                <h2>Svāgataṃ</h2>
-                <p>Follow the path of the cloud messenger across sacred landscapes,
-                where poetry and geography converge. Click on each location to experience Kalidasa's magic. </p>
-            </div>
-            <div>
-                <span class="next-button" id="nextBtn">Next →</span>
-            </div>
+    // Add markers
+    locations.forEach(place => {
+        const popupContent = `
+            <div class="popup-title">${place.name}</div>
+            <div class="popup-text">${place.description}</div>
+            <img class="popup-image" src="${place.image}" alt="${place.name}">
+            <a class="popup-link" href="${place.link}" target="_blank">Read more →</a>
         `;
-        document.getElementById("nextBtn").onclick = () => {
-            showSidebar(locations[0]);
-            map.panTo(locations[0].coords, {animate:true, duration:1});
-        };
-        return;
-    }
 
-    currentIndex = locations.indexOf(place);
-    document.getElementById("info").innerHTML = `
-        <div>
-            <h2>${place.name}</h2>
-            <p>${place.text}</p>
-            <a class="link" href="${place.link}">Read more →</a>
-        </div>
-        <div>
-            <span class="next-button" id="nextBtn">Next →</span>
-        </div>
-    `;
-    document.getElementById("nextBtn").onclick = () => {
-        currentIndex = (currentIndex + 1) % locations.length;
-        showSidebar(locations[currentIndex]);
-        map.panTo(locations[currentIndex].coords, {animate:true, duration:1});
-    };
-}
-
-// Start with Welcome page
-showSidebar("welcome");
+        L.marker(place.coords)
+            .addTo(map)
+            .bindPopup(popupContent);
+    });
 </script>
 
 </body>
 </html>
-
