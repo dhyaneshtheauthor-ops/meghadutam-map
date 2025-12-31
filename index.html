@@ -15,7 +15,7 @@ html, body {
     overflow: hidden;
 }
 
-/* TITLE TEXT */
+/* ==== TITLE OVER MAP ==== */
 #title {
     position: absolute;
     top: 20px;
@@ -29,14 +29,14 @@ html, body {
     text-shadow: 1px 1px 2px rgba(255,255,255,0.3);
 }
 
-/* MAP FULLSCREEN */
+/* ==== MAP FULLSCREEN ==== */
 #map {
     position: absolute;
     inset: 0;
     z-index: 1;
 }
 
-/* PARCHMENT OVERLAY */
+/* ==== PARCHMENT OVERLAY ==== */
 #map::after {
     content: "";
     position: absolute;
@@ -55,7 +55,7 @@ html, body {
     z-index: 2;
 }
 
-/* INFO PANEL */
+/* ==== INFO PANEL ==== */
 #panel {
     position: absolute;
     right: 28px;
@@ -106,7 +106,9 @@ html, body {
     transition: background 0.3s ease;
 }
 
-.primary-btn:hover { background: #e1c48a; }
+.primary-btn:hover {
+    background: #e1c48a;
+}
 
 .secondary-btn {
     display: inline-block;
@@ -117,7 +119,7 @@ html, body {
     cursor: pointer;
 }
 
-/* MAP PINS */
+/* Pins */
 .custom-pin {
     width: 18px;
     height: 18px;
@@ -149,69 +151,66 @@ html, body {
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
 <script>
-// ===== MAP SETUP =====
 const map = L.map('map', { zoomControl: false }).setView([23.5, 78.5], 6);
 
 L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
     attribution: '© OpenStreetMap'
 }).addTo(map);
 
-// ===== INDIA BORDER OVERLAY (GeoJSON) =====
-const indiaBoundary = {
-  "type": "Feature",
-  "properties": { "name": "India" },
-  "geometry": {
-    "type": "Polygon",
-    "coordinates": [[
-      [77.837451,35.49401],[78.912269,34.321936],[78.811086,33.506198],
-      [79.208892,32.994395],[79.176129,32.48378],[78.458446,32.618164],
-      [78.738894,31.515515],[79.721397,30.902224],[80.476721,29.533483],
-      [80.088425,28.79447],[81.057203,28.416095],[81.999987,27.925713],
-      [83.304258,27.364505],[84.675018,27.234901],[85.251779,26.726198],
-      [86.024393,26.630986],[87.227472,26.397898],[88.060238,26.414615],
-      [88.174804,27.299316],[88.835643,27.098966],[89.744525,26.719858],
-      [90.373275,26.875725],[91.217513,26.808648],[92.103713,27.45241],
-      [92.503119,27.896876],[93.413348,28.640629],[94.56599,29.277438],
-      [95.404802,29.031717],[96.117679,29.452986],[96.586591,28.83098],
-      [96.248833,28.411031],[97.051989,27.699059],[97.133999,27.083774],
-      [96.419396,27.264583],[95.124768,26.573713],[94.552658,24.675714],
-      [93.286327,23.04376],[93.060294,22.703111],[92.672721,22.041239],
-      [91.869928,23.624346],[91.158963,23.503527],[90.872211,25.132601],
-      [89.920693,25.26975],[89.83248,25.965757],[88.814248,27.299316],
-      [87.227472,26.397898],[86.024393,26.630986],[85.251779,26.726198],
-      [84.675018,27.234901],[83.304258,27.364505],[81.999987,27.925713],
-      [81.057203,28.416095],[80.088425,28.79447],[80.476721,29.533483],
-      [79.721397,30.902224],[78.738894,31.515515],[78.458446,32.618164],
-      [79.176129,32.48378],[79.208892,32.994395],[78.811086,33.506198],
-      [78.912269,34.321936],[77.837451,35.49401]
-    ]]
-  }
-};
-
-L.geoJSON(indiaBoundary, {
-  style: {
-    color: "#bfa57a",
-    weight: 3,
-    fillOpacity: 0
-  }
-}).addTo(map);
-
-// ===== MAP INTERACTION =====
 const locations = [
-    { name: "Ramagiri", coords: [21.3972,79.3271], text: "A hill of exile, memory, and epic resonance.", link: "/blog/ramtek", image: "https://upload.wikimedia.org/wikipedia/commons/1/1e/Ramtek_Temple.jpg" },
-    { name: "Amrakuta", coords: [22.6749,81.7596], text: "Source of the Narmada, where rivers are born of stone.", link: "/blog/amarkantak", image: "https://upload.wikimedia.org/wikipedia/commons/4/48/Amarkantak.jpg" },
-    { name: "Vidisha", coords: [23.5251,77.8081], text: "Gateway to the Gupta sacred landscape and early temple art.", link: "/blog/vidisha", image: "https://upload.wikimedia.org/wikipedia/commons/7/7c/Vidisha_Udayagiri.jpg" },
-    { name: "Nichai", coords: [23.5244,77.7296], text: "Caves carved with cosmic symbolism and royal devotion.", link: "/blog/udayagiri", image: "https://upload.wikimedia.org/wikipedia/commons/2/2b/Udayagiri_caves.jpg" },
-    { name: "Ujjayini", coords: [23.1765,75.7885], text: "The city of Mahākāla, where time itself is worshipped.", link: "/blog/ujjain", image: "https://upload.wikimedia.org/wikipedia/commons/9/9f/Mahakaleshwar_Temple.jpg" }
+    {
+        name: "Ramagiri",
+        coords: [21.3972, 79.3271],
+        text: "The launchpad of the cloud's journey. Read the blog post to know more.",
+        link: "/blog/ramtek",
+        image: "https://upload.wikimedia.org/wikipedia/commons/1/1e/Ramtek_Temple.jpg"
+    },
+
 ];
 
 const panel = document.getElementById("panel");
-function showPanel(html){ panel.innerHTML = html; panel.style.display = "block"; }
-function showWelcome(){ showPanel(`<h2>Svāgataṃ</h2><p>Follow the path of the cloud messenger across sacred landscapes.</p><div class="primary-btn" onclick="showPlace(0)">Enter the Map</div>`); }
-function showPlace(i){ const p=locations[i]; showPanel(`<img class="place-image" src="${p.image}"><h2>${p.name}</h2><p>${p.text}</p><a class="primary-btn" href="${p.link}">Read More</a><div class="secondary-btn" onclick="showPlace(${(i+1)%locations.length})">Next →</div>`); map.panTo(p.coords,{animate:true,duration:1}); }
 
-const pinIcon = L.divIcon({ className:'', html:'<div class="custom-pin"></div>', iconSize:[18,18], iconAnchor:[9,18] });
-locations.forEach((place,i)=>{ const m=L.marker(place.coords,{icon:pinIcon}).addTo(map); m.on("click",()=>showPlace(i)); });
+function showPanel(html) {
+    panel.innerHTML = html;
+    panel.style.display = "block";
+}
+
+function showWelcome() {
+    showPanel(`
+        <h2>Svāgataṃ</h2>
+        <p>
+        Follow the path of the cloud messenger across sacred landscapes,
+        where poetry and geography converge.
+        </p>
+        <div class="primary-btn" onclick="showPlace(0)">Enter the Map</div>
+        <a class="primary-btn" href="https://yourwordpresssite.com/introduction" target="_blank" style="margin-top:10px;">Read the Introduction</a>
+    `);
+}
+
+
+function showPlace(index) {
+    const p = locations[index];
+    showPanel(`
+        <img class="place-image" src="${p.image}">
+        <h2>${p.name}</h2>
+        <p>${p.text}</p>
+        <a class="primary-btn" href="${p.link}">Read More</a>
+        <div class="secondary-btn" onclick="showPlace(${(index + 1) % locations.length})">Next →</div>
+    `);
+    map.panTo(p.coords, { animate: true, duration: 1 });
+}
+
+const pinIcon = L.divIcon({
+    className: '',
+    html: '<div class="custom-pin"></div>',
+    iconSize: [18, 18],
+    iconAnchor: [9, 18]
+});
+
+locations.forEach((place, i) => {
+    const marker = L.marker(place.coords, { icon: pinIcon }).addTo(map);
+    marker.on("click", () => showPlace(i));
+});
 
 showWelcome();
 </script>
