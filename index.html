@@ -7,86 +7,86 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 
 <style>
-body {
-    margin: 0;
-    background: #1e1b18;
-    font-family: "Georgia", "Times New Roman", serif;
-    color: #e6dccf;
-}
+    body {
+        margin: 0;
+        background: #1e1b18;
+        font-family: "Georgia", "Times New Roman", serif;
+        color: #e6dccf;
+    }
 
-h1 {
-    text-align: center;
-    padding: 20px 0 10px;
-    font-weight: normal;
-    letter-spacing: 1.5px;
-    color: #d6c2a3;
-}
+    h1 {
+        text-align: center;
+        padding: 20px 0 10px;
+        font-weight: normal;
+        letter-spacing: 1.5px;
+        color: #d6c2a3;
+    }
 
-#container {
-    display: flex;
-    height: 80vh;
-    margin: 0 5%;
-    gap: 20px;
-}
+    #container {
+        display: flex;
+        height: 80vh;
+        margin: 0 5%;
+        gap: 20px;
+    }
 
-#map {
-    flex: 2;
-    border-radius: 16px;
-    border: 1px solid #4a3c2c;
-    min-height: 80vh;
-}
+    #map {
+        flex: 2;
+        border-radius: 16px;
+        border: 1px solid #4a3c2c;
+        background: #efe7d6;
+    }
 
-#info {
-    flex: 1;
-    background: #26221e;
-    border: 1px solid #3d3226;
-    border-radius: 16px;
-    padding: 22px;
-    box-shadow: inset 0 0 12px rgba(0,0,0,0.4);
-    font-size: 16px;
-    line-height: 1.65;
-}
+    #info {
+        flex: 1;
+        background: #26221e;
+        border: 1px solid #3d3226;
+        border-radius: 16px;
+        padding: 22px;
+        box-shadow: inset 0 0 12px rgba(0,0,0,0.4);
+        font-size: 16px;
+        line-height: 1.65;
+    }
 
-#info h2 {
-    margin-top: 0;
-    color: #d8c3a5;
-    font-weight: normal;
-}
+    #info h2 {
+        margin-top: 0;
+        color: #d8c3a5;
+        font-weight: normal;
+    }
 
-.link {
-    display: inline-block;
-    margin-top: 12px;
-    color: #c9ab7a;
-    text-decoration: none;
-    border-bottom: 1px solid #c9ab7a;
-}
+    .link {
+        display: inline-block;
+        margin-top: 12px;
+        color: #c9ab7a;
+        text-decoration: none;
+        border-bottom: 1px solid #c9ab7a;
+    }
 
-.link:hover {
-    color: #e0c896;
-    border-color: #e0c896;
-}
+    .link:hover {
+        color: #e0c896;
+        border-color: #e0c896;
+    }
 
-/* Custom pin */
-.custom-pin {
-    width: 18px;
-    height: 18px;
-    background: #bfa57a;
-    border-radius: 50% 50% 50% 0;
-    transform: rotate(-45deg);
-    position: relative;
-    box-shadow: 0 0 6px rgba(0,0,0,0.6);
-}
+    /* Custom pin */
+    .custom-pin {
+        width: 18px;
+        height: 18px;
+        background: #bfa57a;
+        border-radius: 50% 50% 50% 0;
+        transform: rotate(-45deg);
+        position: relative;
+        box-shadow: 0 0 6px rgba(0,0,0,0.6);
+    }
 
-.custom-pin::after {
-    content: "";
-    width: 8px;
-    height: 8px;
-    background: #3b2f24;
-    position: absolute;
-    top: 5px;
-    left: 5px;
-    border-radius: 50%;
-}
+    .custom-pin::after {
+        content: "";
+        width: 8px;
+        height: 8px;
+        background: #3b2f24;
+        position: absolute;
+        top: 5px;
+        left: 5px;
+        border-radius: 50%;
+    }
 </style>
 </head>
 
@@ -99,8 +99,8 @@ h1 {
     <div id="info">
         <h2>Welcome</h2>
         <p>
-            Follow the journey of the cloud across sacred landscapes,
-            where poetry and geography converge.
+            Follow the imagined path of the cloud across sacred landscapes,
+            where poetry, memory, and geography converge.
         </p>
     </div>
 </div>
@@ -108,26 +108,48 @@ h1 {
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
 <script>
-// Initialize map
-const map = L.map('map', { zoomControl: false }).setView([23.5, 78.5], 6);
+const map = L.map('map', {
+    zoomControl: false
+}).setView([23.5, 78.5], 6);
 
-// Dark base map (Carto Dark Matter)
-L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/">CARTO</a>',
-    subdomains: 'abcd',
-    maxZoom: 19
+/* Light parchment-style map */
+L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+    attribution: '© OpenStreetMap'
 }).addTo(map);
 
-// Locations
 const locations = [
-    { name: "Ujjain", coords: [23.1765, 75.7885], text: "The city of Mahākāla, where time itself is worshipped.", link: "/blog/ujjain" },
-    { name: "Vidisha", coords: [23.5251, 77.8081], text: "Gateway to the Gupta sacred landscape and early temple art.", link: "/blog/vidisha" },
-    { name: "Udayagiri", coords: [23.5244, 77.7296], text: "Caves carved with cosmic symbolism and royal devotion.", link: "/blog/udayagiri" },
-    { name: "Amarkantak", coords: [22.6749, 81.7596], text: "Source of the Narmada, where rivers are born of stone.", link: "/blog/amarkantak" },
-    { name: "Ramtek", coords: [21.3972, 79.3271], text: "A hill of exile, memory, and epic resonance.", link: "/blog/ramtek" }
+    {
+        name: "Ujjain",
+        coords: [23.1765, 75.7885],
+        text: "The city of Mahākāla, where time itself is worshipped.",
+        link: "/blog/ujjain"
+    },
+    {
+        name: "Vidisha",
+        coords: [23.5251, 77.8081],
+        text: "Gateway to the Gupta sacred landscape and early temple art.",
+        link: "/blog/vidisha"
+    },
+    {
+        name: "Udayagiri",
+        coords: [23.5244, 77.7296],
+        text: "Caves carved with cosmic symbolism and royal devotion.",
+        link: "/blog/udayagiri"
+    },
+    {
+        name: "Amarkantak",
+        coords: [22.6749, 81.7596],
+        text: "Source of the Narmada, where rivers are born of stone.",
+        link: "/blog/amarkantak"
+    },
+    {
+        name: "Ramtek",
+        coords: [21.3972, 79.3271],
+        text: "A hill of exile, memory, and epic resonance.",
+        link: "/blog/ramtek"
+    }
 ];
 
-// Custom pins
 const pinIcon = L.divIcon({
     className: '',
     html: '<div class="custom-pin"></div>',
@@ -135,7 +157,6 @@ const pinIcon = L.divIcon({
     iconAnchor: [9, 18]
 });
 
-// Add markers
 locations.forEach(place => {
     const marker = L.marker(place.coords, { icon: pinIcon }).addTo(map);
     marker.on("click", () => {
