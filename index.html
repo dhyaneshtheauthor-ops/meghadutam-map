@@ -69,7 +69,8 @@ html, body {
     padding: 22px;
     box-shadow: 0 18px 40px rgba(0,0,0,0.6);
     color: #e6dccf;
-    z-index: 10;
+    z-index: 20;
+    pointer-events: auto;
     animation: fadeIn 0.6s ease;
 }
 
@@ -156,13 +157,13 @@ html, body {
 // ==== MAP INITIALIZATION ====
 const map = new maplibregl.Map({
     container: 'map',
-    style: 'https://api.maptiler.com/maps/basic/style.json?key=2KLPs3v6SocVNHhNtM9X', // replace with your key
+    style: 'https://api.maptiler.com/maps/basic/style.json?key=2KLPs3v6SocVNHhNtM9X', 
     center: [78.5, 23.5],
     zoom: 5
 });
 
 // Hide labels & boundaries for a clean chunk of land
-map.on('load', () => {
+map.on('style.load', () => {
     const layers = map.getStyle().layers;
     layers.forEach(layer => {
         if (layer.type === 'symbol' || layer.id.includes('admin') || layer.id.includes('boundary')) {
@@ -175,7 +176,7 @@ map.on('load', () => {
 const locations = [
     {
         name: "Ramagiri",
-        coords: [79.3271, 21.3972],
+        coords: [79.3271, 21.3972], // [lng, lat]
         text: "The launchpad of the cloud's journey. Read the blog post to know more.",
         link: "/blog/ramtek",
         image: "https://upload.wikimedia.org/wikipedia/commons/1/1e/Ramtek_Temple.jpg"
@@ -218,7 +219,7 @@ function showPlace(index) {
 locations.forEach((place, i) => {
     const el = document.createElement('div');
     el.className = 'custom-pin';
-    const marker = new maplibregl.Marker(el)
+    new maplibregl.Marker(el)
         .setLngLat(place.coords)
         .addTo(map);
     el.addEventListener('click', () => showPlace(i));
@@ -230,4 +231,3 @@ showWelcome();
 
 </body>
 </html>
-
