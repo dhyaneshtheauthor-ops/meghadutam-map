@@ -1,141 +1,167 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Meghadūtam: The Cloud’s Journey</title>
+<meta charset="UTF-8">
+<title>Meghadutam: The Cloud's Journey</title>
 
-<!-- Leaflet -->
-<link
-  rel="stylesheet"
-  href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-/>
-
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 
 <style>
     body {
         margin: 0;
-        background: #0f0f14;
-        font-family: "Inter", "Segoe UI", sans-serif;
-        color: #eaeaea;
+        background: #1e1b16;
+        font-family: 'Georgia', serif;
+        color: #e6d8b5;
+        overflow: hidden;
     }
 
     #map {
         height: 100vh;
-        width: 100%;
+        width: 100vw;
+        filter: sepia(10%) brightness(0.95);
+    }
+
+    /* Intro overlay */
+    #intro {
+        position: absolute;
+        inset: 0;
+        background: rgba(30, 27, 22, 0.92);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        z-index: 1000;
+        animation: fadeOut 2s ease forwards;
+        animation-delay: 4s;
+    }
+
+    #intro h1 {
+        font-size: 3rem;
+        letter-spacing: 0.1em;
+        margin-bottom: 1rem;
+    }
+
+    #intro p {
+        font-size: 1.1rem;
+        opacity: 0.8;
+    }
+
+    @keyframes fadeOut {
+        to {
+            opacity: 0;
+            pointer-events: none;
+        }
+    }
+
+    /* Cloud animation */
+    .cloud {
+        position: absolute;
+        top: 20%;
+        left: -30%;
+        width: 160%;
+        height: 200px;
+        background: url("https://i.imgur.com/W3QJv9T.png") repeat-x;
+        opacity: 0.15;
+        animation: drift 20s linear forwards;
+        z-index: 900;
+    }
+
+    @keyframes drift {
+        from { transform: translateX(0); }
+        to { transform: translateX(100%); }
     }
 
     .leaflet-popup-content-wrapper {
-        background: #16161d;
-        color: #f1f1f1;
-        border-radius: 12px;
-        box-shadow: 0 0 20px rgba(255,255,255,0.08);
+        background: #2b2621;
+        color: #e8d9b0;
+        border-radius: 8px;
+        font-family: Georgia, serif;
     }
 
-    .leaflet-popup-tip {
-        background: #16161d;
-    }
-
-    .popup-title {
-        font-size: 1.1rem;
-        font-weight: 600;
-        margin-bottom: 6px;
-    }
-
-    .popup-text {
-        font-size: 0.9rem;
-        opacity: 0.85;
-        margin-bottom: 8px;
-    }
-
-    .popup-link {
-        color: #8ecbff;
+    .leaflet-popup-content a {
+        color: #d8b26e;
         text-decoration: none;
-        font-size: 0.9rem;
+        border-bottom: 1px solid #d8b26e;
     }
 
-    .popup-link:hover {
-        text-decoration: underline;
-    }
-
-    .popup-image {
-        width: 100%;
-        border-radius: 6px;
-        margin-top: 6px;
-    }
 </style>
 </head>
 
 <body>
 
+<div id="intro">
+    <h1>Svāgatam</h1>
+    <p>Follow the cloud’s path across the sacred geography of Kālidāsa.</p>
+</div>
+
+<div class="cloud"></div>
 <div id="map"></div>
 
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <script>
-    // Initialize map
     const map = L.map('map', {
-        zoomControl: true
-    }).setView([23.5, 78.5], 6);
+        zoomControl: false,
+        attributionControl: false
+    }).setView([23.5, 79], 6);
 
-    // Dark map tiles
-    L.tileLayer(
-        'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
-        {
-            attribution: '&copy; OpenStreetMap contributors'
-        }
-    ).addTo(map);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: ''
+    }).addTo(map);
 
-    // Location data
+    const beigeIcon = L.icon({
+        iconUrl: 'https://i.imgur.com/7Z6FQ1M.png', // beige pin
+        iconSize: [30, 40],
+        iconAnchor: [15, 40],
+        popupAnchor: [0, -35]
+    });
+
     const locations = [
         {
             name: "Ramtek",
             coords: [21.397, 79.327],
-            description: "Traditionally linked to Kalidasa’s Meghadūta and the poet’s contemplative exile.",
+            text: "The starting point of the Cloud’s journey.",
             link: "https://yourwordpresssite.com/ramtek",
-            image: "https://via.placeholder.com/300x160?text=Ramtek"
+            img: "https://upload.wikimedia.org/wikipedia/commons/6/6b/Ramtek_temple.jpg"
         },
         {
             name: "Amarkantak",
-            coords: [22.674, 81.759],
-            description: "Source of sacred rivers and a spiritual threshold in the cloud’s journey.",
+            coords: [22.673, 81.758],
+            text: "Source of sacred rivers and poetic longing.",
             link: "https://yourwordpresssite.com/amarkantak",
-            image: "https://via.placeholder.com/300x160?text=Amarkantak"
+            img: "https://upload.wikimedia.org/wikipedia/commons/8/8f/Amarkantak.jpg"
         },
         {
             name: "Vidisha",
-            coords: [23.525, 77.808],
-            description: "Ancient crossroads of art, politics, and devotion.",
+            coords: [23.526, 77.808],
+            text: "Ancient crossroads of empires.",
             link: "https://yourwordpresssite.com/vidisha",
-            image: "https://via.placeholder.com/300x160?text=Vidisha"
+            img: "https://upload.wikimedia.org/wikipedia/commons/d/d3/Vidisha.jpg"
         },
         {
             name: "Udayagiri",
-            coords: [23.533, 77.740],
-            description: "Cave sanctuaries carved into living rock during the Gupta age.",
+            coords: [23.53, 77.75],
+            text: "Caves carved with cosmic memory.",
             link: "https://yourwordpresssite.com/udayagiri",
-            image: "https://via.placeholder.com/300x160?text=Udayagiri"
+            img: "https://upload.wikimedia.org/wikipedia/commons/3/36/Udayagiri_caves.jpg"
         },
         {
             name: "Ujjain",
-            coords: [23.179, 75.784],
-            description: "Sacred city of Mahākāla and the final resonance of the cloud.",
+            coords: [23.1765, 75.7885],
+            text: "The sacred heart of time.",
             link: "https://yourwordpresssite.com/ujjain",
-            image: "https://via.placeholder.com/300x160?text=Ujjain"
+            img: "https://upload.wikimedia.org/wikipedia/commons/2/2e/Mahakaleshwar_Temple.jpg"
         }
     ];
 
-    // Add markers
     locations.forEach(place => {
-        const popupContent = `
-            <div class="popup-title">${place.name}</div>
-            <div class="popup-text">${place.description}</div>
-            <img class="popup-image" src="${place.image}" alt="${place.name}">
-            <a class="popup-link" href="${place.link}" target="_blank">Read more →</a>
-        `;
-
-        L.marker(place.coords)
+        L.marker(place.coords, { icon: beigeIcon })
             .addTo(map)
-            .bindPopup(popupContent);
+            .bindPopup(`
+                <h3>${place.name}</h3>
+                <p>${place.text}</p>
+                <img src="${place.img}" width="100%" style="border-radius:6px;margin-top:6px;">
+                <p><a href="${place.link}" target="_blank">Explore →</a></p>
+            `);
     });
 </script>
 
