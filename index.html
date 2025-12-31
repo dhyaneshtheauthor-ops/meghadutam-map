@@ -107,49 +107,31 @@ h1 {
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
 <script>
-const map = L.map('map', {
-    zoomControl: false
-}).setView([23.5, 78.5], 6);
+// Initialize map
+const map = L.map('map', { zoomControl: false }).setView([23.5, 78.5], 6);
 
-/* Dark map with light lines & labels */
-L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-    attribution: '© OpenStreetMap',
+// Dark base map (Voyager Dark)
+L.tileLayer('https://{s}.basemaps.cartocdn.com/voyager_nolabels/{z}/{x}/{y}{r}.png', {
+    attribution: '© OpenStreetMap contributors',
     subdomains: 'abcd'
 }).addTo(map);
 
+// Overlay labels for readability
+L.tileLayer('https://{s}.basemaps.cartocdn.com/voyager_only_labels/{z}/{x}/{y}{r}.png', {
+    attribution: '',
+    subdomains: 'abcd'
+}).addTo(map);
+
+// Locations
 const locations = [
-    {
-        name: "Ujjain",
-        coords: [23.1765, 75.7885],
-        text: "The city of Mahākāla, where time itself is worshipped.",
-        link: "/blog/ujjain"
-    },
-    {
-        name: "Vidisha",
-        coords: [23.5251, 77.8081],
-        text: "Gateway to the Gupta sacred landscape and early temple art.",
-        link: "/blog/vidisha"
-    },
-    {
-        name: "Udayagiri",
-        coords: [23.5244, 77.7296],
-        text: "Caves carved with cosmic symbolism and royal devotion.",
-        link: "/blog/udayagiri"
-    },
-    {
-        name: "Amarkantak",
-        coords: [22.6749, 81.7596],
-        text: "Source of the Narmada, where rivers are born of stone.",
-        link: "/blog/amarkantak"
-    },
-    {
-        name: "Ramtek",
-        coords: [21.3972, 79.3271],
-        text: "A hill of exile, memory, and epic resonance.",
-        link: "/blog/ramtek"
-    }
+    { name: "Ujjain", coords: [23.1765, 75.7885], text: "The city of Mahākāla, where time itself is worshipped.", link: "/blog/ujjain" },
+    { name: "Vidisha", coords: [23.5251, 77.8081], text: "Gateway to the Gupta sacred landscape and early temple art.", link: "/blog/vidisha" },
+    { name: "Udayagiri", coords: [23.5244, 77.7296], text: "Caves carved with cosmic symbolism and royal devotion.", link: "/blog/udayagiri" },
+    { name: "Amarkantak", coords: [22.6749, 81.7596], text: "Source of the Narmada, where rivers are born of stone.", link: "/blog/amarkantak" },
+    { name: "Ramtek", coords: [21.3972, 79.3271], text: "A hill of exile, memory, and epic resonance.", link: "/blog/ramtek" }
 ];
 
+// Custom pins
 const pinIcon = L.divIcon({
     className: '',
     html: '<div class="custom-pin"></div>',
@@ -157,6 +139,7 @@ const pinIcon = L.divIcon({
     iconAnchor: [9, 18]
 });
 
+// Add markers
 locations.forEach(place => {
     const marker = L.marker(place.coords, { icon: pinIcon }).addTo(map);
     marker.on("click", () => {
