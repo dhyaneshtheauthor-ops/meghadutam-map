@@ -89,7 +89,6 @@ h1 {
     border-radius: 6px;
     cursor: pointer;
     font-weight: bold;
-    align-self: center;
 }
 
 .next-button:hover {
@@ -141,9 +140,9 @@ const locations = [
     {
         name: "Ramagiri",
         coords: [21.3972, 79.3271],
-        text: "A hill of exile, memory, and epic resonance.",
-        link: "/blog/ramtek",
-        image: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/Spire_of_Main_Shrine_-_Ram_Temple%2C_Ramtek.JPG/500px-Spire_of_Main_Shrine_-_Ram_Temple%2C_Ramtek.JPG"
+        text: "The launchpad of our epic journey.",
+        link: "https://dhyankatha.wordpress.com",
+        image: "https://as2.ftcdn.net/jpg/05/01/19/79/1000_F_501197913_jyVGqK5uSWraWXXHbSIXmbCiijJmJCMQ.jpg"
     },
     {
         name: "Amrakuta",
@@ -190,6 +189,26 @@ locations.forEach(place => {
 let currentIndex = -1;
 
 function showSidebar(place) {
+    if (place === "welcome") {
+        document.getElementById("info").innerHTML = `
+            <div>
+                <h2>Svāgataṃ</h2>
+                <p>
+                    Follow the path of the cloud messenger across sacred landscapes,
+                    where poetry and geography converge.
+                </p>
+            </div>
+            <div>
+                <span class="next-button" id="nextBtn">Next →</span>
+            </div>
+        `;
+        document.getElementById("nextBtn").onclick = () => {
+            showSidebar(locations[0]);
+            map.panTo(locations[0].coords, { animate: true, duration: 1 });
+        };
+        return;
+    }
+
     currentIndex = locations.indexOf(place);
     document.getElementById("info").innerHTML = `
         <div>
@@ -210,8 +229,8 @@ function showSidebar(place) {
     };
 }
 
-// Initial view
-showSidebar(locations[0]);
+// Initial screen
+showSidebar("welcome");
 </script>
 
 </body>
