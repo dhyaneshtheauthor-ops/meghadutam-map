@@ -5,192 +5,87 @@
 <title>Meghadutam – The Cloud’s Journey</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 <style>
-html, body {
-    margin: 0;
-    height: 100%;
-    font-family: "Georgia", "Times New Roman", serif;
-    background: #1e1b18;
-    overflow: hidden;
-}
-
+html, body { margin:0; height:100%; font-family: Georgia, "Times New Roman", serif; background:#1e1b18; }
 #title {
-    position: absolute;
-    top: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 32px;
-    font-weight: bold;
-    color: black;
-    z-index: 15;
-    pointer-events: none;
-    text-shadow: 1px 1px 2px rgba(255,255,255,0.3);
+    position:absolute; top:20px; left:50%; transform:translateX(-50%);
+    font-size:32px; font-weight:bold; color:black; z-index:1000;
+    pointer-events:none; text-shadow:1px 1px 2px rgba(255,255,255,0.3);
 }
-
-#map {
-    position: absolute;
-    inset: 0;
-    z-index: 1;
-}
-
-#clouds {
-    position: absolute;
-    inset: 0;
-    z-index: 5; /* above map and panel */
-    pointer-events: none;
-    background:
-        radial-gradient(circle at 20% 30%, rgba(255,255,255,0.08), transparent 40%),
-        radial-gradient(circle at 60% 20%, rgba(255,255,255,0.05), transparent 40%),
-        radial-gradient(circle at 80% 60%, rgba(255,255,255,0.06), transparent 35%),
-        radial-gradient(circle at 40% 70%, rgba(255,255,255,0.07), transparent 30%);
-    background-size: 300% 300%;
-    animation: drift 100s linear infinite;
-}
-
-@keyframes drift {
-    0% { background-position: 0 0, 0 0, 0 0, 0 0; }
-    100% { background-position: -1200px 800px, 900px -700px, -1000px 600px, 800px -500px; }
-}
-
 #panel {
-    position: absolute;
-    right: 28px;
-    top: 90px;
-    width: 360px;
-    max-width: 90vw;
-    background: #26221e;
-    border: 1px solid #3d3226;
-    border-radius: 18px;
-    padding: 22px;
-    box-shadow: 0 18px 40px rgba(0,0,0,0.6);
-    color: #e6dccf;
-    z-index: 10;
-    animation: fadeIn 0.6s ease;
+    position:absolute; right:28px; top:90px; width:360px; max-width:90vw;
+    background:#26221e; border:1px solid #3d3226; border-radius:18px;
+    padding:22px; box-shadow:0 18px 40px rgba(0,0,0,0.6);
+    color:#e6dccf; z-index:1000;
 }
-
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(-20px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-#panel h2 {
-    margin-top: 0;
-    color: #d8c3a5;
-}
-
+#panel h2 { margin-top:0; color:#d8c3a5; }
 .place-image {
-    width: 100%;
-    height: 160px;
-    object-fit: cover;
-    border-radius: 12px;
-    margin-bottom: 14px;
-    border: 1px solid #4a3c2c;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+    width:100%; height:160px; object-fit:cover; border-radius:12px; margin-bottom:14px;
+    border:1px solid #4a3c2c; box-shadow:0 4px 10px rgba(0,0,0,0.4);
 }
-
-.primary-btn {
-    display: block;
-    margin-top: 16px;
-    padding: 10px 18px;
-    background: #c9ad78;
-    color: #2f261d;
-    text-align: center;
-    font-weight: bold;
-    border-radius: 8px;
-    text-decoration: none;
-    transition: background 0.3s ease;
-}
-
-.primary-btn:hover { background: #e1c48a; }
-
-.secondary-btn {
-    display: inline-block;
-    margin-top: 10px;
-    font-size: 14px;
-    color: #c9ab7a;
-    text-decoration: underline;
-    cursor: pointer;
-}
-
-.custom-pin {
-    width: 18px;
-    height: 18px;
-    background: #bfa57a;
-    border-radius: 50% 50% 50% 0;
-    transform: rotate(-45deg);
-    position: relative;
-    box-shadow: 0 0 6px rgba(0,0,0,0.6);
-}
-.custom-pin::after {
-    content: "";
-    width: 8px;
-    height: 8px;
-    background: #3b2f24;
-    position: absolute;
-    top: 5px;
-    left: 5px;
-    border-radius: 50%;
-}
+.primary-btn { display:block; margin-top:16px; padding:10px 18px; background:#c9ad78; color:#2f261d; text-align:center; font-weight:bold; border-radius:8px; text-decoration:none; transition:background 0.3s ease; }
+.primary-btn:hover { background:#e1c48a; }
+.secondary-btn { display:inline-block; margin-top:10px; font-size:14px; color:#c9ab7a; text-decoration:underline; cursor:pointer; }
+.custom-pin { width:18px; height:18px; background:#bfa57a; border-radius:50% 50% 50% 0; transform:rotate(-45deg); position:relative; box-shadow:0 0 6px rgba(0,0,0,0.6); }
+.custom-pin::after { content:""; width:8px; height:8px; background:#3b2f24; position:absolute; top:5px; left:5px; border-radius:50%; }
 </style>
 </head>
 <body>
 
 <div id="title">Meghadutam: The Cloud’s Journey</div>
-<div id="map"></div>
-<div id="clouds"></div>
+<div id="map" style="height:100%; width:100%;"></div>
 <div id="panel"></div>
 
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <script>
-const map = L.map('map', { zoomControl: false }).setView([23.5, 78.5], 6);
+// --- MAP INIT ---
+const map = L.map('map', { zoomControl:false }).setView([23.5,78.5],6);
+L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',{ attribution:'© OpenStreetMap'}).addTo(map);
 
-L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-    attribution: '© OpenStreetMap'
-}).addTo(map);
+// --- CLOUD LAYER INSIDE LEAFLET ---
+const cloudPane = map.createPane('cloudsPane');
+cloudPane.style.zIndex = 450; // above tiles, below markers
+cloudPane.style.pointerEvents = 'none';
 
+const cloudDiv = L.DomUtil.create('div', 'cloudsLayer', cloudPane);
+cloudDiv.style.position='absolute';
+cloudDiv.style.top='0'; cloudDiv.style.left='0';
+cloudDiv.style.width='100%'; cloudDiv.style.height='100%';
+cloudDiv.style.background=`
+radial-gradient(circle at 20% 30%, rgba(255,255,255,0.08), transparent 40%),
+radial-gradient(circle at 60% 20%, rgba(255,255,255,0.05), transparent 40%),
+radial-gradient(circle at 80% 60%, rgba(255,255,255,0.06), transparent 35%),
+radial-gradient(circle at 40% 70%, rgba(255,255,255,0.07), transparent 30%)
+`;
+cloudDiv.style.backgroundSize='300% 300%';
+cloudDiv.style.animation='drift 120s linear infinite';
+
+const styleSheet = document.styleSheets[0];
+styleSheet.insertRule(`@keyframes drift { 0%{background-position:0 0,0 0,0 0,0 0;} 100%{background-position:-1200px 800px,900px -700px,-1000px 600px,800px -500px;} }`, styleSheet.cssRules.length);
+
+// --- LOCATIONS ---
 const locations = [
-    { name: "Ramagiri", coords: [21.3972, 79.3271], text: "A hill of exile.", link: "/blog/ramtek", image: "https://as2.ftcdn.net/jpg/05/01/19/79/1000_F_501197913_jyVGqK5uSWraWXXHbSIXmbCiijJmJCMQ.jpg" },
-    { name: "Amrakuta", coords: [22.6749, 81.7596], text: "Source of Narmada.", link: "/blog/amarkantak", image: "https://upload.wikimedia.org/wikipedia/commons/4/48/Amarkantak.jpg" },
-    { name: "Vidisha", coords: [23.5251, 77.8081], text: "Gateway to Gupta art.", link: "/blog/vidisha", image: "https://upload.wikimedia.org/wikipedia/commons/7/7c/Vidisha_Udayagiri.jpg" },
-    { name: "Nichai", coords: [23.5244, 77.7296], text: "Caves with cosmic symbolism.", link: "/blog/udayagiri", image: "https://upload.wikimedia.org/wikipedia/commons/2/2b/Udayagiri_caves.jpg" },
-    { name: "Ujjayini", coords: [23.1765, 75.7885], text: "City of Mahākāla.", link: "/blog/ujjain", image: "https://upload.wikimedia.org/wikipedia/commons/9/9f/Mahakaleshwar_Temple.jpg" }
+{name:"Ramagiri",coords:[21.3972,79.3271],text:"A hill of exile.",link:"/blog/ramtek",image:"https://as2.ftcdn.net/jpg/05/01/19/79/1000_F_501197913_jyVGqK5uSWraWXXHbSIXmbCiijJmJCMQ.jpg"},
+{name:"Amrakuta",coords:[22.6749,81.7596],text:"Source of Narmada.",link:"/blog/amarkantak",image:"https://upload.wikimedia.org/wikipedia/commons/4/48/Amarkantak.jpg"},
+{name:"Vidisha",coords:[23.5251,77.8081],text:"Gateway to Gupta art.",link:"/blog/vidisha",image:"https://upload.wikimedia.org/wikipedia/commons/7/7c/Vidisha_Udayagiri.jpg"},
+{name:"Nichai",coords:[23.5244,77.7296],text:"Caves with cosmic symbolism.",link:"/blog/udayagiri",image:"https://upload.wikimedia.org/wikipedia/commons/2/2b/Udayagiri_caves.jpg"},
+{name:"Ujjayini",coords:[23.1765,75.7885],text:"City of Mahākāla.",link:"/blog/ujjain",image:"https://upload.wikimedia.org/wikipedia/commons/9/9f/Mahakaleshwar_Temple.jpg"}
 ];
 
-const panel = document.getElementById("panel");
-
-function showPanel(html) {
-    panel.innerHTML = html;
-    panel.style.display = "block";
+// --- PANEL CONTROL ---
+const panel = document.getElementById('panel');
+function showPanel(html){panel.innerHTML=html; panel.style.display='block';}
+function showWelcome(){showPanel(`<h2>Svāgataṃ</h2><p>Follow the path of the cloud messenger across sacred landscapes.</p><div class="primary-btn" onclick="showPlace(0)">Enter the Map</div>`);}
+function showPlace(i){
+    const p=locations[i];
+    showPanel(`<img class="place-image" src="${p.image}"><h2>${p.name}</h2><p>${p.text}</p><a class="primary-btn" href="${p.link}">Read More</a><div class="secondary-btn" onclick="showPlace(${(i+1)%locations.length})">Next →</div>`);
+    map.panTo(p.coords,{animate:true,duration:1});
 }
 
-function showWelcome() {
-    showPanel(`
-        <h2>Svāgataṃ</h2>
-        <p>Follow the path of the cloud messenger across sacred landscapes.</p>
-        <div class="primary-btn" onclick="showPlace(0)">Enter the Map</div>
-    `);
-}
-
-function showPlace(index) {
-    const p = locations[index];
-    showPanel(`
-        <img class="place-image" src="${p.image}">
-        <h2>${p.name}</h2>
-        <p>${p.text}</p>
-        <a class="primary-btn" href="${p.link}">Read More</a>
-        <div class="secondary-btn" onclick="showPlace(${(index+1) % locations.length})">Next →</div>
-    `);
-    map.panTo(p.coords, { animate: true, duration: 1 });
-}
-
-const pinIcon = L.divIcon({ className: '', html: '<div class="custom-pin"></div>', iconSize: [18,18], iconAnchor: [9,18] });
-
-locations.forEach((place, i) => {
-    const marker = L.marker(place.coords, { icon: pinIcon }).addTo(map);
-    marker.on("click", () => showPlace(i));
-});
+// --- MARKERS ---
+const pinIcon = L.divIcon({ className:'', html:'<div class="custom-pin"></div>', iconSize:[18,18], iconAnchor:[9,18] });
+locations.forEach((p,i)=>{const m=L.marker(p.coords,{icon:pinIcon}).addTo(map); m.on('click',()=>showPlace(i));});
 
 showWelcome();
 </script>
-
 </body>
 </html>
