@@ -38,6 +38,9 @@ h1 {
 
 #info {
     flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* places next button at bottom */
     background: #26221e;
     border: 1px solid #3d3226;
     border-radius: 16px;
@@ -69,13 +72,14 @@ h1 {
 .next-button {
     display: inline-block;
     margin-top: 15px;
-    padding: 6px 12px;
+    padding: 8px 16px;
     background: #bfa57a;
     color: #3b2f24;
     text-decoration: none;
     border-radius: 6px;
     cursor: pointer;
     font-weight: bold;
+    align-self: center; /* center at bottom */
 }
 
 .next-button:hover {
@@ -113,11 +117,7 @@ h1 {
 <div id="container">
     <div id="map"></div>
     <div id="info">
-        <h2>Welcome</h2>
-        <p>
-            Follow the imagined path of the cloud across sacred landscapes,
-            where poetry and geography converge.
-        </p>
+        <!-- Sidebar content will be injected by JS -->
     </div>
 </div>
 
@@ -148,28 +148,34 @@ locations.forEach(place => {
     marker.on("click", () => showSidebar(place));
 });
 
-// Current location index for "Next →" button
+// Current location index for bottom Next button
 let currentIndex = 0;
 
 // Function to update sidebar
 function showSidebar(place) {
     currentIndex = locations.indexOf(place);
     document.getElementById("info").innerHTML = `
-        <h2>${place.name}</h2>
-        <p>${place.text}</p>
-        <a class="link" href="${place.link}">Read more →</a><br>
-        <span class="next-button" id="nextBtn">Next →</span>
+        <div>
+            <h2>${place.name}</h2>
+            <p>${place.text}</p>
+            <a class="link" href="${place.link}">Read more →</a>
+        </div>
+        <div>
+            <span class="next-button" id="nextBtn">Next →</span>
+        </div>
     `;
 
-    // Add event listener to next button
+    // Event listener for bottom next button
     document.getElementById("nextBtn").onclick = () => {
         currentIndex = (currentIndex + 1) % locations.length;
         showSidebar(locations[currentIndex]);
+        // Optional: pan map to next location
+        map.panTo(locations[currentIndex].coords, {animate: true, duration: 1});
     };
 }
 
-// Optionally, start with first location
-// showSidebar(locations[0]);
+// Start sidebar with Ramtek
+showSidebar(locations[0]);
 </script>
 
 </body>
