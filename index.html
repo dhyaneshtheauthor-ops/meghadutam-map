@@ -33,6 +33,7 @@ h1 {
     flex: 2;
     border-radius: 16px;
     border: 1px solid #4a3c2c;
+    min-height: 80vh;
 }
 
 #info {
@@ -110,16 +111,11 @@ h1 {
 // Initialize map
 const map = L.map('map', { zoomControl: false }).setView([23.5, 78.5], 6);
 
-// Dark base map (Voyager Dark)
-L.tileLayer('https://{s}.basemaps.cartocdn.com/voyager_nolabels/{z}/{x}/{y}{r}.png', {
-    attribution: '© OpenStreetMap contributors',
-    subdomains: 'abcd'
-}).addTo(map);
-
-// Overlay labels for readability
-L.tileLayer('https://{s}.basemaps.cartocdn.com/voyager_only_labels/{z}/{x}/{y}{r}.png', {
-    attribution: '',
-    subdomains: 'abcd'
+// Dark base map (Carto Dark Matter)
+L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/">CARTO</a>',
+    subdomains: 'abcd',
+    maxZoom: 19
 }).addTo(map);
 
 // Locations
