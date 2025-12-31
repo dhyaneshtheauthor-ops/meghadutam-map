@@ -16,7 +16,7 @@ html, body {
     overflow: hidden;
 }
 
-/* ==== TITLE OVER MAP ==== */
+/* Title overlay */
 #title {
     position: absolute;
     top: 20px;
@@ -30,14 +30,14 @@ html, body {
     text-shadow: 1px 1px 2px rgba(255,255,255,0.3);
 }
 
-/* ==== MAP FULLSCREEN ==== */
+/* Fullscreen map */
 #map {
     position: absolute;
     inset: 0;
     z-index: 1;
 }
 
-/* ==== PARCHMENT OVERLAY ==== */
+/* Parchment texture overlay */
 #map::after {
     content: "";
     position: absolute;
@@ -56,7 +56,7 @@ html, body {
     z-index: 2;
 }
 
-/* ==== INFO PANEL ==== */
+/* Info panel */
 #panel {
     position: absolute;
     right: 28px;
@@ -120,7 +120,7 @@ html, body {
     cursor: pointer;
 }
 
-/* Pins */
+/* Custom map pins */
 .custom-pin {
     width: 18px;
     height: 18px;
@@ -153,15 +153,17 @@ html, body {
 <script src="https://unpkg.com/maplibre-gl@2.5.0/dist/maplibre-gl.js"></script>
 
 <script>
-// MapLibre initialization with MapTiler style
+// Initialize the MapLibre map using your MapTiler style JSON
 const map = new maplibregl.Map({
     container: 'map',
     style: 'https://api.maptiler.com/maps/streets-v4-dark/style.json?key=2KLPs3v6SocVNHhNtM9X',
-    center: [78.5, 23.5],
+    center: [78.5, 23.5], // lon, lat
     zoom: 5
 });
 
-// Locations data
+map.addControl(new maplibregl.NavigationControl());
+
+// Your locations array — add more as you publish blog posts
 const locations = [
     {
         name: "Ramagiri",
@@ -188,26 +190,24 @@ const locations = [
 
 const panel = document.getElementById("panel");
 
-// Show panel content
+// Helper to show panel content
 function showPanel(html) {
     panel.innerHTML = html;
     panel.style.display = "block";
 }
 
-// Welcome screen
+// First welcome screen
 function showWelcome() {
     showPanel(`
         <h2>Svāgataṃ</h2>
-        <p>
-        Follow the path of the cloud messenger across sacred landscapes,
-        where poetry and geography converge.
-        </p>
+        <p>Follow the path of the cloud messenger across sacred landscapes,
+        where poetry and geography converge.</p>
         <div class="primary-btn" onclick="showPlace(0)">Enter the Map</div>
-        <a class="primary-btn" href="https://yourwordpresssite.com/introduction" target="_blank" style="margin-top:10px;">Read the Introduction</a>
+        <a class="primary-btn" href="https://yourwordpresssite.com/introduction" target="_blank">Read the Introduction</a>
     `);
 }
 
-// Show specific location
+// Show a place’s details
 function showPlace(index) {
     const p = locations[index];
     showPanel(`
@@ -220,18 +220,18 @@ function showPlace(index) {
     map.flyTo({ center: p.coords, zoom: 7, essential: true });
 }
 
-// Add custom pins
+// Add map pins
 locations.forEach((place, i) => {
-    const el = document.createElement('div');
-    el.className = 'custom-pin';
-    new maplibregl.Marker(el)
+    const pinEl = document.createElement('div');
+    pinEl.className = 'custom-pin';
+    pinEl.addEventListener('click', () => showPlace(i));
+
+    new maplibregl.Marker(pinEl)
         .setLngLat(place.coords)
-        .addTo(map)
-        .getElement()
-        .addEventListener('click', () => showPlace(i));
+        .addTo(map);
 });
 
-// Initial view
+// Show welcome panel on load
 showWelcome();
 </script>
 
