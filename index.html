@@ -7,100 +7,104 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
 
 <style>
-    body {
-        margin: 0;
-        background: #1e1b16;
-        font-family: "Georgia", serif;
-        color: #e6d8b5;
-        overflow: hidden;
-    }
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&display=swap');
 
-    #map {
-        height: 100vh;
-        width: 100vw;
-        position: relative;
-        z-index: 1;
-    }
+html, body {
+    margin: 0;
+    height: 100%;
+    background: #2b2621;
+    font-family: 'Cormorant Garamond', serif;
+}
 
-    /* Parchment overlay */
-    #parchment {
-        position: absolute;
-        inset: 0;
-        background: url("https://i.imgur.com/8wQZg7S.png");
-        opacity: 0.18;
-        pointer-events: none;
-        z-index: 2;
-        mix-blend-mode: multiply;
-    }
+/* Map container */
+#map {
+    height: 100vh;
+    width: 100%;
+    position: relative;
+    filter: saturate(90%);
+}
 
-    /* Intro screen */
-    #intro {
-        position: absolute;
-        inset: 0;
-        background: rgba(28, 25, 20, 0.94);
-        z-index: 1000;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        text-align: center;
-    }
+/* Parchment overlay */
+#parchment {
+    position: absolute;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    width: 100%;
+    height: 100%;
+    background-image: url("https://img.freepik.com/free-photo/wooden-floor-background_53876-88628.jpg?semt=ais_hybrid&w=740&q=80");
+    background-size: cover;
+    opacity: 0.25;
+    mix-blend-mode: overlay;
+    z-index: 400;
+}
 
-    #intro h1 {
-        font-size: 3rem;
-        letter-spacing: 0.15em;
-        margin-bottom: 1rem;
-    }
+/* Opening overlay */
+#intro {
+    position: fixed;
+    inset: 0;
+    background: rgba(30, 25, 20, 0.92);
+    color: #e6d8b8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    z-index: 1000;
+    text-align: center;
+    padding: 2rem;
+}
 
-    #intro p {
-        font-size: 1.1rem;
-        opacity: 0.85;
-        max-width: 500px;
-    }
+#intro h1 {
+    font-size: 3rem;
+    letter-spacing: 2px;
+    margin-bottom: 1rem;
+}
 
-    #closeIntro {
-        margin-top: 2rem;
-        padding: 8px 16px;
-        background: transparent;
-        border: 1px solid #d8c9a0;
-        color: #d8c9a0;
-        font-family: inherit;
-        cursor: pointer;
-    }
+#intro p {
+    max-width: 500px;
+    font-size: 1.1rem;
+    opacity: 0.9;
+}
 
-    /* Cloud animation */
-    .cloud {
-        position: absolute;
-        top: 12%;
-        left: -40%;
-        width: 180%;
-        height: 200px;
-        background: url("https://png.pngtree.com/png-clipart/20220918/ourmid/pngtree-floating-realistic-clouds-png-image_6195497.png") repeat-x;
-        background-size: contain;
-        opacity: 0.25;
-        animation: drift 35s linear infinite;
-        z-index: 5;
-        pointer-events: none;
-    }
+#enter {
+    margin-top: 2rem;
+    padding: 12px 26px;
+    border: 1px solid #e6d8b8;
+    background: transparent;
+    color: #e6d8b8;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 1rem;
+    transition: 0.3s;
+}
 
-    @keyframes drift {
-        from { transform: translateX(0); }
-        to { transform: translateX(100%); }
-    }
+#enter:hover {
+    background: #e6d8b8;
+    color: #2b2621;
+}
 
-    /* Popup styling */
-    .leaflet-popup-content-wrapper {
-        background: #2b2621;
-        color: #e8d9b0;
-        border-radius: 8px;
-        box-shadow: 0 0 20px rgba(0,0,0,0.6);
-    }
+/* Popup styling */
+.leaflet-popup-content-wrapper {
+    background: #2f2a24;
+    color: #e8dcc0;
+    border-radius: 8px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.6);
+}
 
-    .leaflet-popup-content a {
-        color: #d6b87c;
-        text-decoration: none;
-        border-bottom: 1px solid #d6b87c;
-    }
+.leaflet-popup-content img {
+    width: 100%;
+    border-radius: 6px;
+    margin-bottom: 6px;
+}
+
+.leaflet-popup-content a {
+    color: #e6cfa3;
+    text-decoration: none;
+}
+
+.leaflet-popup-tip {
+    background: #2f2a24;
+}
 </style>
 </head>
 
@@ -108,85 +112,79 @@
 
 <div id="intro">
     <h1>Svāgatam</h1>
-    <p>Follow the cloud’s journey across the sacred geography of Kālidāsa.</p>
-    <button id="closeIntro">Enter the Map</button>
+    <p>Enter the sacred geography traced by Kālidāsa’s cloud —  
+    a journey across memory, mountain, and myth.</p>
+    <button id="enter">Enter the Map</button>
 </div>
 
-<div class="cloud"></div>
 <div id="map"></div>
 <div id="parchment"></div>
 
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-
 <script>
-    const map = L.map('map', {
-        zoomControl: false,
-        attributionControl: false
-    }).setView([23.5, 79], 6);
+const map = L.map('map', {
+    zoomControl: false,
+    attributionControl: false
+}).setView([23.5, 79], 6);
 
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 18
-    }).addTo(map);
+L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+    maxZoom: 10
+}).addTo(map);
 
-    const beigePin = new L.Icon({
-        iconUrl: 'https://i.imgur.com/6YbH7q8.png',
-        iconSize: [32, 42],
-        iconAnchor: [16, 42],
-        popupAnchor: [0, -38]
-    });
+// Beige custom marker
+const beigeIcon = L.icon({
+    iconUrl: 'https://p1.hiclipart.com/preview/788/958/422/essential-compilation-icon-pin-icon-placeholder-icon-circle-symbol-beige-jewellery-png-clipart.jpg',
+    iconSize: [30, 42],
+    iconAnchor: [15, 42],
+    popupAnchor: [0, -35]
+});
 
-    const places = [
-        {
-            name: "Ramtek",
-            coords: [21.397, 79.327],
-            desc: "The beginning of the cloud’s journey.",
-            link: "https://yourwordpresssite.com/ramtek",
-            img: "https://upload.wikimedia.org/wikipedia/commons/6/6b/Ramtek_temple.jpg"
-        },
-        {
-            name: "Amarkantak",
-            coords: [22.673, 81.758],
-            desc: "Source of sacred rivers and longing.",
-            link: "https://yourwordpresssite.com/amarkantak",
-            img: "https://upload.wikimedia.org/wikipedia/commons/8/8f/Amarkantak.jpg"
-        },
-        {
-            name: "Vidisha",
-            coords: [23.526, 77.808],
-            desc: "A crossroads of empires and memory.",
-            link: "https://yourwordpresssite.com/vidisha",
-            img: "https://upload.wikimedia.org/wikipedia/commons/d/d3/Vidisha.jpg"
-        },
-        {
-            name: "Udayagiri",
-            coords: [23.53, 77.75],
-            desc: "Caves where stone remembers time.",
-            link: "https://yourwordpresssite.com/udayagiri",
-            img: "https://upload.wikimedia.org/wikipedia/commons/3/36/Udayagiri_caves.jpg"
-        },
-        {
-            name: "Ujjain",
-            coords: [23.1765, 75.7885],
-            desc: "The sacred heart of cosmic time.",
-            link: "https://yourwordpresssite.com/ujjain",
-            img: "https://upload.wikimedia.org/wikipedia/commons/2/2e/Mahakaleshwar_Temple.jpg"
-        }
-    ];
+const locations = [
+    {
+        name: "Ramtek",
+        coords: [21.397, 79.327],
+        img: "https://upload.wikimedia.org/wikipedia/commons/1/1e/Ramtek_Temple.jpg",
+        link: "https://yourwordpresssite.com/ramtek"
+    },
+    {
+        name: "Amarkantak",
+        coords: [22.674, 81.750],
+        img: "https://upload.wikimedia.org/wikipedia/commons/4/48/Amarkantak.jpg",
+        link: "https://yourwordpresssite.com/amarkantak"
+    },
+    {
+        name: "Vidisha",
+        coords: [23.526, 77.807],
+        img: "https://upload.wikimedia.org/wikipedia/commons/7/7c/Vidisha_Udayagiri.jpg",
+        link: "https://yourwordpresssite.com/vidisha"
+    },
+    {
+        name: "Udayagiri",
+        coords: [23.526, 77.807],
+        img: "https://upload.wikimedia.org/wikipedia/commons/2/2b/Udayagiri_caves.jpg",
+        link: "https://yourwordpresssite.com/udayagiri"
+    },
+    {
+        name: "Ujjain",
+        coords: [23.1765, 75.7885],
+        img: "https://upload.wikimedia.org/wikipedia/commons/9/9f/Mahakaleshwar_Temple.jpg",
+        link: "https://yourwordpresssite.com/ujjain"
+    }
+];
 
-    places.forEach(p => {
-        L.marker(p.coords, { icon: beigePin })
-            .addTo(map)
-            .bindPopup(`
-                <h3>${p.name}</h3>
-                <p>${p.desc}</p>
-                <img src="${p.img}" style="width:100%;border-radius:6px;margin-top:6px;">
-                <p><a href="${p.link}" target="_blank">Explore →</a></p>
-            `);
-    });
+locations.forEach(place => {
+    L.marker(place.coords, { icon: beigeIcon })
+        .addTo(map)
+        .bindPopup(`
+            <strong>${place.name}</strong><br>
+            <img src="${place.img}">
+            <a href="${place.link}" target="_blank">Explore →</a>
+        `);
+});
 
-    document.getElementById("closeIntro").onclick = () => {
-        document.getElementById("intro").style.display = "none";
-    };
+document.getElementById("enter").onclick = () => {
+    document.getElementById("intro").style.display = "none";
+};
 </script>
 
 </body>
