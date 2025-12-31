@@ -15,29 +15,14 @@ html, body {
     overflow: hidden;
 }
 
-/* ===== TITLE BAR ===== */
-#titlebar {
-    position: absolute;
-    top: 0;
-    width: 100%;
-    text-align: center;
-    padding: 14px 0;
-    background: linear-gradient(to bottom, rgba(30,27,24,0.95), rgba(30,27,24,0.6));
-    color: #e6dccf;
-    font-size: 26px;
-    letter-spacing: 2px;
-    z-index: 20;
-    border-bottom: 1px solid #3d3226;
-}
-
-/* === MAP === */
+/* === MAP FULLSCREEN === */
 #map {
     position: absolute;
     inset: 0;
     z-index: 1;
 }
 
-/* parchment overlay */
+/* === PARCHMENT OVERLAY === */
 #map::after {
     content: "";
     position: absolute;
@@ -56,11 +41,25 @@ html, body {
     z-index: 2;
 }
 
+/* === TITLE === */
+#title {
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 20;
+    font-size: 28px;
+    color: #e6dccf;
+    letter-spacing: 1.5px;
+    text-shadow: 0 0 6px rgba(0,0,0,0.5);
+    font-weight: normal;
+}
+
 /* === INFO PANEL === */
 #panel {
     position: absolute;
     right: 28px;
-    top: 90px;
+    top: 80px;
     width: 360px;
     max-width: 90vw;
     background: #26221e;
@@ -71,6 +70,27 @@ html, body {
     color: #e6dccf;
     z-index: 10;
     animation: fadeIn 0.6s ease;
+    overflow: hidden;
+}
+
+/* === CLOUDS ANIMATION IN PANEL === */
+#panel::before {
+    content: "";
+    position: absolute;
+    top: -50px;
+    right: -50px;
+    width: 200px;
+    height: 200px;
+    background: radial-gradient(circle, rgba(255,255,255,0.08) 20%, transparent 60%);
+    border-radius: 50%;
+    animation: drift 12s linear infinite;
+    pointer-events: none;
+}
+
+@keyframes drift {
+    0% { transform: translate(0,0) }
+    50% { transform: translate(-20px, 15px) }
+    100% { transform: translate(0,0) }
 }
 
 @keyframes fadeIn {
@@ -120,7 +140,7 @@ html, body {
     cursor: pointer;
 }
 
-/* Pins */
+/* === MAP PINS === */
 .custom-pin {
     width: 18px;
     height: 18px;
@@ -145,12 +165,11 @@ html, body {
 
 <body>
 
-<div id="titlebar">Meghadutam: The Cloud’s Journey</div>
 <div id="map"></div>
+<div id="title">Meghadutam: The Cloud’s Journey</div>
 <div id="panel"></div>
 
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-
 <script>
 const map = L.map('map', { zoomControl: false }).setView([23.5, 78.5], 6);
 
@@ -159,41 +178,11 @@ L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
 }).addTo(map);
 
 const locations = [
-    {
-        name: "Ramagiri",
-        coords: [21.3972, 79.3271],
-        text: "A hill of exile, memory, and epic resonance.",
-        link: "/blog/ramtek",
-        image: "https://upload.wikimedia.org/wikipedia/commons/1/1e/Ramtek_Temple.jpg"
-    },
-    {
-        name: "Amrakuta",
-        coords: [22.6749, 81.7596],
-        text: "Source of the Narmada, where rivers are born of stone.",
-        link: "/blog/amarkantak",
-        image: "https://upload.wikimedia.org/wikipedia/commons/4/48/Amarkantak.jpg"
-    },
-    {
-        name: "Vidisha",
-        coords: [23.5251, 77.8081],
-        text: "Gateway to the Gupta sacred landscape and early temple art.",
-        link: "/blog/vidisha",
-        image: "https://upload.wikimedia.org/wikipedia/commons/7/7c/Vidisha_Udayagiri.jpg"
-    },
-    {
-        name: "Nichai",
-        coords: [23.5244, 77.7296],
-        text: "Caves carved with cosmic symbolism and royal devotion.",
-        link: "/blog/udayagiri",
-        image: "https://upload.wikimedia.org/wikipedia/commons/2/2b/Udayagiri_caves.jpg"
-    },
-    {
-        name: "Ujjayini",
-        coords: [23.1765, 75.7885],
-        text: "The city of Mahākāla, where time itself is worshipped.",
-        link: "/blog/ujjain",
-        image: "https://upload.wikimedia.org/wikipedia/commons/9/9f/Mahakaleshwar_Temple.jpg"
-    }
+    { name: "Ramagiri", coords: [21.3972, 79.3271], text: "A hill of exile, memory, and epic resonance.", link: "/blog/ramtek", image: "https://upload.wikimedia.org/wikipedia/commons/1/1e/Ramtek_Temple.jpg" },
+    { name: "Amrakuta", coords: [22.6749, 81.7596], text: "Source of the Narmada, where rivers are born of stone.", link: "/blog/amarkantak", image: "https://upload.wikimedia.org/wikipedia/commons/4/48/Amarkantak.jpg" },
+    { name: "Vidisha", coords: [23.5251, 77.8081], text: "Gateway to the Gupta sacred landscape and early temple art.", link: "/blog/vidisha", image: "https://upload.wikimedia.org/wikipedia/commons/7/7c/Vidisha_Udayagiri.jpg" },
+    { name: "Nichai", coords: [23.5244, 77.7296], text: "Caves carved with cosmic symbolism and royal devotion.", link: "/blog/udayagiri", image: "https://upload.wikimedia.org/wikipedia/commons/2/2b/Udayagiri_caves.jpg" },
+    { name: "Ujjayini", coords: [23.1765, 75.7885], text: "The city of Mahākāla, where time itself is worshipped.", link: "/blog/ujjain", image: "https://upload.wikimedia.org/wikipedia/commons/9/9f/Mahakaleshwar_Temple.jpg" }
 ];
 
 const panel = document.getElementById("panel");
@@ -226,12 +215,7 @@ function showPlace(index) {
     map.panTo(p.coords, { animate: true, duration: 1 });
 }
 
-const pinIcon = L.divIcon({
-    className: '',
-    html: '<div class="custom-pin"></div>',
-    iconSize: [18, 18],
-    iconAnchor: [9, 18]
-});
+const pinIcon = L.divIcon({ className: '', html: '<div class="custom-pin"></div>', iconSize: [18, 18], iconAnchor: [9, 18] });
 
 locations.forEach((place, i) => {
     const marker = L.marker(place.coords, { icon: pinIcon }).addTo(map);
