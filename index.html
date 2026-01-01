@@ -1,245 +1,209 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Meghadutam – The Cloud’s Journey</title>
+<meta charset="UTF-8" />
+<title>Meghadutam: The Cloud's Journey</title>
 
-<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+<link href="https://unpkg.com/maplibre-gl@3.5.2/dist/maplibre-gl.css" rel="stylesheet" />
 
 <style>
 html, body {
     margin: 0;
     height: 100%;
-    font-family: "Georgia", "Times New Roman", serif;
-    background: #1e1b18;
-    overflow: hidden;
+    font-family: "Georgia", serif;
+    background: #1b1a17;
+    color: #e7dfcf;
 }
 
-/* ==== TITLE OVER MAP ==== */
+#map {
+    width: 100%;
+    height: 100vh;
+}
+
+/* Title */
 #title {
     position: absolute;
     top: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 32px;
-    font-weight: bold;
-    color: black;
-    z-index: 15;
-    pointer-events: none;
-    text-shadow: 1px 1px 2px rgba(255,255,255,0.3);
-}
-
-/* ==== MAP FULLSCREEN ==== */
-#map {
-    position: absolute;
-    inset: 0;
-    z-index: 1;
-}
-
-/* ==== PARCHMENT OVERLAY ==== */
-#map::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background:
-        radial-gradient(circle at 25% 30%, rgba(255,255,255,0.06), transparent 40%),
-        radial-gradient(circle at 75% 70%, rgba(255,255,255,0.04), transparent 45%),
-        repeating-linear-gradient(
-            45deg,
-            rgba(255,255,255,0.015),
-            rgba(255,255,255,0.015) 2px,
-            transparent 2px,
-            transparent 6px
-        );
-    pointer-events: none;
-    z-index: 2;
-}
-
-/* ==== INFO PANEL ==== */
-#panel {
-    position: absolute;
-    right: 28px;
-    top: 90px;
-    width: 360px;
-    max-width: 90vw;
-    background: #26221e;
-    border: 1px solid #3d3226;
-    border-radius: 18px;
-    padding: 22px;
-    box-shadow: 0 18px 40px rgba(0,0,0,0.6);
-    color: #e6dccf;
-    z-index: 10;
-    animation: fadeIn 0.6s ease;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(-20px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-#panel h2 {
-    margin-top: 0;
-    color: #d8c3a5;
-}
-
-.place-image {
     width: 100%;
-    height: 160px;
-    object-fit: cover;
-    border-radius: 12px;
-    margin-bottom: 14px;
-    border: 1px solid #4a3c2c;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
-}
-
-/* Buttons */
-.primary-btn {
-    display: block;
-    margin-top: 16px;
-    padding: 10px 18px;
-    background: #c9ad78;
-    color: #2f261d;
     text-align: center;
-    font-weight: bold;
-    border-radius: 8px;
-    text-decoration: none;
-    transition: background 0.3s ease;
+    font-size: 28px;
+    letter-spacing: 1px;
+    color: #e6d8b8;
+    z-index: 10;
+    pointer-events: none;
 }
 
-.primary-btn:hover {
-    background: #e1c48a;
+/* Intro Modal */
+#intro {
+    position: absolute;
+    inset: 0;
+    background: rgba(20,18,15,0.92);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 20;
 }
 
-.secondary-btn {
-    display: inline-block;
-    margin-top: 10px;
+#intro-box {
+    background: #2a2621;
+    border: 1px solid #a08d64;
+    padding: 32px;
+    max-width: 420px;
+    text-align: center;
+    box-shadow: 0 0 30px rgba(0,0,0,0.6);
+}
+
+#intro h2 {
+    margin-top: 0;
+    color: #e8d9b0;
+}
+
+.intro-btn {
+    margin: 12px 6px 0;
+    padding: 10px 18px;
+    background: #b9a06b;
+    color: #1b1a17;
+    border: none;
+    cursor: pointer;
     font-size: 14px;
-    color: #c9ab7a;
-    text-decoration: underline;
+}
+
+.intro-btn:hover {
+    background: #d5be85;
+}
+
+/* Marker */
+.marker {
+    width: 26px;
+    height: 26px;
+    background: #d8c49a;
+    border: 2px solid #3b3325;
+    border-radius: 50%;
     cursor: pointer;
 }
 
-/* Pins */
-.custom-pin {
-    width: 18px;
-    height: 18px;
-    background: #bfa57a;
-    border-radius: 50% 50% 50% 0;
-    transform: rotate(-45deg);
-    position: relative;
-    box-shadow: 0 0 6px rgba(0,0,0,0.6);
+/* Popup */
+.maplibregl-popup-content {
+    background: #2b2823;
+    color: #e9dec5;
+    border: 1px solid #9f8c5c;
+    font-family: Georgia, serif;
+    max-width: 260px;
 }
-.custom-pin::after {
-    content: "";
-    width: 8px;
-    height: 8px;
-    background: #3b2f24;
-    position: absolute;
-    top: 5px;
-    left: 5px;
-    border-radius: 50%;
+
+.maplibregl-popup-content img {
+    width: 100%;
+    margin-bottom: 8px;
+    border-radius: 4px;
 }
 </style>
 </head>
 
 <body>
 
-<div id="title">Meghadutam: The Cloud’s Journey</div>
+<div id="title">Meghadutam: The Cloud's Journey</div>
 <div id="map"></div>
-<div id="panel"></div>
 
-<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<div id="intro">
+    <div id="intro-box">
+        <h2>Svāgatam</h2>
+        <p>
+            Follow the cloud’s ancient path across sacred landscapes,
+            where poetry, geography, and memory converge.
+        </p>
+        <button class="intro-btn" onclick="startJourney()">Begin the Journey</button>
+        <button class="intro-btn" onclick="window.open('https://example.com','_blank')">
+            Read the Introduction
+        </button>
+    </div>
+</div>
+
+<script src="https://unpkg.com/maplibre-gl@3.5.2/dist/maplibre-gl.js"></script>
 
 <script>
-const map = L.map('map', { zoomControl: false }).setView([23.5, 78.5], 6);
-
-L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-    attribution: '© OpenStreetMap'
-}).addTo(map);
-
 const locations = [
     {
-        name: "Ramagiri",
-        coords: [21.3972, 79.3271],
-        text: "A hill of exile, memory, and epic resonance.",
-        link: "/blog/ramtek",
-        image: "https://upload.wikimedia.org/wikipedia/commons/1/1e/Ramtek_Temple.jpg"
+        name: "Ramtek",
+        coords: [79.327, 21.397],
+        image: "https://upload.wikimedia.org/wikipedia/commons/5/5b/Ramtek_Temple.jpg",
+        text: "The cloud begins its journey from the hills sacred to Rama."
     },
     {
-        name: "Amrakuta",
-        coords: [22.6749, 81.7596],
-        text: "Source of the Narmada, where rivers are born of stone.",
-        link: "/blog/amarkantak",
-        image: "https://upload.wikimedia.org/wikipedia/commons/4/48/Amarkantak.jpg"
+        name: "Amarkantak",
+        coords: [81.753, 22.676],
+        image: "https://upload.wikimedia.org/wikipedia/commons/1/1e/Amarkantak.jpg",
+        text: "Source of rivers, cradle of forests and myth."
     },
     {
         name: "Vidisha",
-        coords: [23.5251, 77.8081],
-        text: "Gateway to the Gupta sacred landscape and early temple art.",
-        link: "/blog/vidisha",
-        image: "https://upload.wikimedia.org/wikipedia/commons/7/7c/Vidisha_Udayagiri.jpg"
+        coords: [77.807, 23.526],
+        image: "https://upload.wikimedia.org/wikipedia/commons/3/3e/Vidisha_India.jpg",
+        text: "A crossroads of culture and empire."
     },
     {
-        name: "Nichai",
-        coords: [23.5244, 77.7296],
-        text: "Caves carved with cosmic symbolism and royal devotion.",
-        link: "/blog/udayagiri",
-        image: "https://upload.wikimedia.org/wikipedia/commons/2/2b/Udayagiri_caves.jpg"
+        name: "Udayagiri",
+        coords: [77.736, 23.536],
+        image: "https://upload.wikimedia.org/wikipedia/commons/6/6a/Udayagiri_caves.jpg",
+        text: "Caves where stone learned to speak divinity."
     },
     {
-        name: "Ujjayini",
-        coords: [23.1765, 75.7885],
-        text: "The city of Mahākāla, where time itself is worshipped.",
-        link: "/blog/ujjain",
-        image: "https://upload.wikimedia.org/wikipedia/commons/9/9f/Mahakaleshwar_Temple.jpg"
+        name: "Ujjain",
+        coords: [75.784, 23.179],
+        image: "https://upload.wikimedia.org/wikipedia/commons/9/98/Mahakaleshwar_Temple_Ujjain.jpg",
+        text: "The heart of time, where the cloud rests."
     }
 ];
 
-const panel = document.getElementById("panel");
+let map;
+let currentIndex = 0;
 
-function showPanel(html) {
-    panel.innerHTML = html;
-    panel.style.display = "block";
-}
-
-function showWelcome() {
-    showPanel(`
-        <h2>Svāgataṃ</h2>
-        <p>
-        Follow the path of the cloud messenger across sacred landscapes,
-        where poetry, memory, and geography converge.
-        </p>
-        <div class="primary-btn" onclick="showPlace(0)">Enter the Map</div>
-        <a class="primary-btn" href="https://yourwordpresssite.com/introduction" target="_blank" style="margin-top:10px;">Read the Introduction</a>
-    `);
-}
-
-
-function showPlace(index) {
-    const p = locations[index];
-    showPanel(`
-        <img class="place-image" src="${p.image}">
-        <h2>${p.name}</h2>
-        <p>${p.text}</p>
-        <a class="primary-btn" href="${p.link}">Read More</a>
-        <div class="secondary-btn" onclick="showPlace(${(index + 1) % locations.length})">Next →</div>
-    `);
-    map.panTo(p.coords, { animate: true, duration: 1 });
-}
-
-const pinIcon = L.divIcon({
-    className: '',
-    html: '<div class="custom-pin"></div>',
-    iconSize: [18, 18],
-    iconAnchor: [9, 18]
+map = new maplibregl.Map({
+    container: 'map',
+    style: 'https://api.maptiler.com/maps/satellite/style.json?key=2KLPs3v6SocVNHhNtM9X',
+    center: [78, 22],
+    zoom: 5
 });
 
-locations.forEach((place, i) => {
-    const marker = L.marker(place.coords, { icon: pinIcon }).addTo(map);
-    marker.on("click", () => showPlace(i));
-});
+function createMarker(location, index) {
+    const el = document.createElement('div');
+    el.className = 'marker';
 
-showWelcome();
+    const popup = new maplibregl.Popup({ offset: 25 })
+        .setHTML(`
+            <h3>${location.name}</h3>
+            <img src="${location.image}" />
+            <p>${location.text}</p>
+        `);
+
+    el.addEventListener('click', () => {
+        popup.addTo(map);
+        popup.setLngLat(location.coords);
+        currentIndex = index;
+    });
+
+    new maplibregl.Marker(el)
+        .setLngLat(location.coords)
+        .addTo(map);
+}
+
+locations.forEach(createMarker);
+
+function startJourney() {
+    document.getElementById('intro').style.display = 'none';
+    flyToLocation(0);
+}
+
+function flyToLocation(index) {
+    const loc = locations[index];
+    map.flyTo({
+        center: loc.coords,
+        zoom: 8,
+        speed: 0.8,
+        curve: 1.4
+    });
+}
 </script>
 
 </body>
