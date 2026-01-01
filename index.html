@@ -34,26 +34,7 @@ html, body {
     inset: 0;
 }
 
-/* parchment overlay */
-#map::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background:
-        radial-gradient(circle at 25% 30%, rgba(255,255,255,0.06), transparent 40%),
-        radial-gradient(circle at 75% 70%, rgba(255,255,255,0.04), transparent 45%),
-        repeating-linear-gradient(
-            45deg,
-            rgba(255,255,255,0.015),
-            rgba(255,255,255,0.015) 2px,
-            transparent 2px,
-            transparent 6px
-        );
-    pointer-events: none;
-    z-index: 2;
-}
-
-/* ===== INFO PANEL ===== */
+/* ===== PANEL ===== */
 #panel {
     position: absolute;
     right: 28px;
@@ -68,73 +49,36 @@ html, body {
     z-index: 5;
 }
 
-#panel h2 {
-    margin-top: 0;
-    color: #d8c3a5;
-}
-
-.place-image {
-    width: 100%;
-    height: 160px;
-    object-fit: cover;
-    border-radius: 12px;
-    margin-bottom: 14px;
-    border: 1px solid #4a3c2c;
-}
-
-/* Buttons */
-.primary-btn {
-    display: block;
-    margin-top: 14px;
-    padding: 10px 18px;
-    background: #c9ad78;
-    color: #2f261d;
-    text-align: center;
-    font-weight: bold;
-    border-radius: 8px;
-    cursor: pointer;
-}
-
-.primary-btn:hover {
-    background: #e1c48a;
-}
-
-.secondary-btn {
-    display: inline-block;
-    margin-top: 10px;
-    font-size: 14px;
-    color: #c9ab7a;
-    cursor: pointer;
-}
-
-/* ===== PIN STYLE ===== */
+/* ===== PIN (FIXED & STABLE) ===== */
 .pin-wrapper {
-    width: 18px;
-    height: 18px;
+    width: 28px;
+    height: 28px;
     position: relative;
     cursor: pointer;
+    pointer-events: auto;
 }
 
 .custom-pin {
-    width: 18px;
-    height: 18px;
+    width: 28px;
+    height: 28px;
     background: #d6c39a;
     border-radius: 50% 50% 50% 0;
     transform: rotate(-45deg);
+    transform-origin: 50% 100%;
     position: absolute;
-    top: 0;
     left: 0;
-    box-shadow: 0 0 6px rgba(0,0,0,0.6);
+    top: 0;
+    box-shadow: 0 0 8px rgba(0,0,0,0.55);
 }
 
 .custom-pin::after {
     content: "";
-    width: 8px;
-    height: 8px;
+    width: 10px;
+    height: 10px;
     background: #6e5b3e;
     position: absolute;
-    top: 5px;
-    left: 5px;
+    top: 9px;
+    left: 9px;
     border-radius: 50%;
 }
 </style>
@@ -196,26 +140,17 @@ const locations = [
 
 const panel = document.getElementById("panel");
 
-function showPanel(content) {
-    panel.innerHTML = content;
-}
-
 function showPlace(index) {
     const p = locations[index];
-    showPanel(`
+    panel.innerHTML = `
         <img class="place-image" src="${p.image}">
         <h2>${p.name}</h2>
         <p>${p.text}</p>
         <a class="primary-btn" href="${p.link}">Read More</a>
         <div class="secondary-btn" onclick="showPlace(${(index + 1) % locations.length})">Next →</div>
-    `);
+    `;
 
-    map.flyTo({
-        center: p.coords,
-        zoom: 8,
-        speed: 0.9,
-        curve: 1.4
-    });
+    map.flyTo({ center: p.coords, zoom: 8, speed: 0.9 });
 }
 
 locations.forEach((loc, i) => {
@@ -226,22 +161,17 @@ locations.forEach((loc, i) => {
     pin.className = "custom-pin";
     wrapper.appendChild(pin);
 
-    wrapper.addEventListener("click", () => showPlace(i));
+    wrapper.onclick = () => showPlace(i);
 
     new maplibregl.Marker({
         element: wrapper,
         anchor: "bottom"
-    }).setLngLat(loc.coords).addTo(map);
+    })
+    .setLngLat(loc.coords)
+    .addTo(map);
 });
 
-showPanel(`
-    <h2>Svāgatam</h2>
-    <p>
-        Follow the cloud’s path across sacred geographies —
-        where poetry, memory, and landscape converge.
-    </p>
-    <div class="primary-btn" onclick="showPlace(0)">Begin the Journey</div>
-`);
+showPlace(0);
 </script>
 
 </body>
