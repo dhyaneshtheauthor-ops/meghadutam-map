@@ -23,9 +23,9 @@ html, body {
     transform: translateX(-50%);
     font-size: 32px;
     font-weight: bold;
-    color: black;
+    color: #e3d6b5;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.4);
     z-index: 10;
-    text-shadow: 1px 1px 2px rgba(255,255,255,0.3);
 }
 
 /* ===== MAP ===== */
@@ -112,7 +112,7 @@ html, body {
 .custom-pin {
     width: 18px;
     height: 18px;
-    background: #bfa57a;
+    background: #d6c39a; /* beige */
     border-radius: 50% 50% 50% 0;
     transform: rotate(-45deg);
     position: relative;
@@ -122,7 +122,7 @@ html, body {
     content: "";
     width: 8px;
     height: 8px;
-    background: #3b2f24;
+    background: #6e5b3e;
     position: absolute;
     top: 5px;
     left: 5px;
@@ -187,37 +187,26 @@ const locations = [
 
 const panel = document.getElementById("panel");
 
-function showPanel(content) {
-    panel.innerHTML = content;
+function showPanel(html) {
+    panel.innerHTML = html;
 }
 
-function showPlace(i) {
-    const p = locations[i];
+function showPlace(index) {
+    const p = locations[index];
     showPanel(`
         <img class="place-image" src="${p.image}">
         <h2>${p.name}</h2>
         <p>${p.text}</p>
         <a class="primary-btn" href="${p.link}">Read More</a>
-        <div class="secondary-btn" onclick="showPlace(${(i + 1) % locations.length})">Next →</div>
+        <div class="secondary-btn" onclick="showPlace(${(index + 1) % locations.length})">Next →</div>
     `);
 
     map.flyTo({
         center: p.coords,
         zoom: 8,
-        speed: 0.8,
+        speed: 0.9,
         curve: 1.4
     });
-}
-
-function showIntro() {
-    showPanel(`
-        <h2>Svāgatam</h2>
-        <p>
-            Follow the cloud’s path across sacred geographies —
-            where poetry, time, and terrain merge.
-        </p>
-        <div class="primary-btn" onclick="showPlace(0)">Enter the Journey</div>
-    `);
 }
 
 locations.forEach((loc, i) => {
@@ -227,7 +216,14 @@ locations.forEach((loc, i) => {
     new maplibregl.Marker(el).setLngLat(loc.coords).addTo(map);
 });
 
-showIntro();
+showPanel(`
+    <h2>Svāgatam</h2>
+    <p>
+        Follow the cloud’s path across sacred geographies —
+        where poetry, landscape, and memory meet.
+    </p>
+    <div class="primary-btn" onclick="showPlace(0)">Begin the Journey</div>
+`);
 </script>
 
 </body>
