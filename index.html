@@ -53,12 +53,12 @@ html, body {
     z-index: 2;
 }
 
-/* ===== INFO PANEL (ENLARGED) ===== */
+/* ===== INFO PANEL ===== */
 #panel {
     position: absolute;
     right: 28px;
     top: 90px;
-    width: 420px; /* increased */
+    width: 420px;
     background: #26221e;
     border: 1px solid #3d3226;
     border-radius: 18px;
@@ -76,7 +76,7 @@ html, body {
 
 .place-image {
     width: 100%;
-    height: 200px; /* larger image */
+    height: 200px;
     object-fit: cover;
     border-radius: 14px;
     margin-bottom: 16px;
@@ -106,37 +106,6 @@ html, body {
     font-size: 15px;
     color: #c9ab7a;
     cursor: pointer;
-}
-
-/* ===== PIN STYLE (BIGGER + STABLE) ===== */
-.pin-wrapper {
-    width: 28px;
-    height: 28px;
-    position: relative;
-    cursor: pointer;
-}
-
-.custom-pin {
-    width: 28px;
-    height: 28px;
-    background: #d6c39a;
-    border-radius: 50% 50% 50% 0;
-    transform: rotate(-45deg);
-    position: absolute;
-    top: 0;
-    left: 0;
-    box-shadow: 0 0 8px rgba(0,0,0,0.6);
-}
-
-.custom-pin::after {
-    content: "";
-    width: 12px;
-    height: 12px;
-    background: #6e5b3e;
-    position: absolute;
-    top: 8px;
-    left: 8px;
-    border-radius: 50%;
 }
 </style>
 </head>
@@ -215,26 +184,19 @@ function showPlace(index) {
 }
 
 locations.forEach((loc, i) => {
-    const wrapper = document.createElement("div");
-    wrapper.className = "pin-wrapper";
+    const marker = new maplibregl.Marker()
+        .setLngLat(loc.coords)
+        .addTo(map);
 
-    const pin = document.createElement("div");
-    pin.className = "custom-pin";
-    wrapper.appendChild(pin);
-
-    wrapper.addEventListener("click", () => showPlace(i));
-
-    new maplibregl.Marker({
-        element: wrapper,
-        anchor: "bottom"
-    }).setLngLat(loc.coords).addTo(map);
+    marker.getElement().style.cursor = "pointer";
+    marker.getElement().addEventListener("click", () => showPlace(i));
 });
 
 showPanel(`
     <h2>Svāgatam</h2>
     <p>
-        Follow the cloud’s path across sacred geographies —
-        where poetry, memory, and landscape converge.
+        Follow the cloud’s path across sacred landscapes —
+        where poetry, memory, and geography converge.
     </p>
     <div class="primary-btn" onclick="showPlace(0)">Begin the Journey</div>
 `);
