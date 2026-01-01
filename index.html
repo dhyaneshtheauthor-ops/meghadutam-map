@@ -15,7 +15,7 @@ html, body {
     overflow: hidden;
 }
 
-/* ===== TITLE ===== */
+/* TITLE */
 #title {
     position: absolute;
     top: 20px;
@@ -28,37 +28,18 @@ html, body {
     z-index: 10;
 }
 
-/* ===== MAP ===== */
+/* MAP */
 #map {
     position: absolute;
     inset: 0;
 }
 
-/* parchment overlay */
-#map::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background:
-        radial-gradient(circle at 25% 30%, rgba(255,255,255,0.06), transparent 40%),
-        radial-gradient(circle at 75% 70%, rgba(255,255,255,0.04), transparent 45%),
-        repeating-linear-gradient(
-            45deg,
-            rgba(255,255,255,0.015),
-            rgba(255,255,255,0.015) 2px,
-            transparent 2px,
-            transparent 6px
-        );
-    pointer-events: none;
-    z-index: 2;
-}
-
-/* ===== INFO PANEL (ENLARGED) ===== */
+/* PANEL */
 #panel {
     position: absolute;
     right: 28px;
     top: 90px;
-    width: 420px; /* increased */
+    width: 420px;
     background: #26221e;
     border: 1px solid #3d3226;
     border-radius: 18px;
@@ -76,14 +57,14 @@ html, body {
 
 .place-image {
     width: 100%;
-    height: 200px; /* larger image */
+    height: 200px;
     object-fit: cover;
     border-radius: 14px;
     margin-bottom: 16px;
     border: 1px solid #4a3c2c;
 }
 
-/* Buttons */
+/* BUTTONS */
 .primary-btn {
     display: block;
     margin-top: 16px;
@@ -96,39 +77,29 @@ html, body {
     cursor: pointer;
 }
 
-.primary-btn:hover {
-    background: #e1c48a;
-}
-
-.secondary-btn {
-    display: inline-block;
-    margin-top: 12px;
-    font-size: 15px;
-    color: #c9ab7a;
-    cursor: pointer;
-}
-
-/* ===== PIN STYLE (BIGGER + STABLE) ===== */
+/* ===== PIN FIX ===== */
 .pin-wrapper {
     width: 28px;
     height: 28px;
     position: relative;
-    cursor: pointer;
+    pointer-events: auto;
 }
 
-.custom-pin {
+/* The visual pin — rotation happens here */
+.pin-shape {
     width: 28px;
     height: 28px;
     background: #d6c39a;
     border-radius: 50% 50% 50% 0;
     transform: rotate(-45deg);
+    transform-origin: center;
+    box-shadow: 0 0 8px rgba(0,0,0,0.6);
     position: absolute;
     top: 0;
     left: 0;
-    box-shadow: 0 0 8px rgba(0,0,0,0.6);
 }
 
-.custom-pin::after {
+.pin-shape::after {
     content: "";
     width: 12px;
     height: 12px;
@@ -158,59 +129,24 @@ const map = new maplibregl.Map({
 });
 
 const locations = [
-    {
-        name: "Ramagiri",
-        coords: [79.3271, 21.3972],
-        text: "A hill of exile, memory, and epic resonance.",
-        image: "https://upload.wikimedia.org/wikipedia/commons/1/1e/Ramtek_Temple.jpg",
-        link: "/blog/ramtek"
-    },
-    {
-        name: "Amarakantak",
-        coords: [81.7596, 22.6749],
-        text: "Source of the Narmada, where rivers are born of stone.",
-        image: "https://upload.wikimedia.org/wikipedia/commons/4/48/Amarkantak.jpg",
-        link: "/blog/amarkantak"
-    },
-    {
-        name: "Vidisha",
-        coords: [77.8081, 23.5251],
-        text: "Gateway to the Gupta sacred landscape.",
-        image: "https://upload.wikimedia.org/wikipedia/commons/7/7c/Vidisha_Udayagiri.jpg",
-        link: "/blog/vidisha"
-    },
-    {
-        name: "Udayagiri",
-        coords: [77.7296, 23.5244],
-        text: "Caves carved with cosmic symbolism.",
-        image: "https://upload.wikimedia.org/wikipedia/commons/2/2b/Udayagiri_caves.jpg",
-        link: "/blog/udayagiri"
-    },
-    {
-        name: "Ujjain",
-        coords: [75.7885, 23.1765],
-        text: "Where time itself is worshipped.",
-        image: "https://upload.wikimedia.org/wikipedia/commons/9/9f/Mahakaleshwar_Temple.jpg",
-        link: "/blog/ujjain"
-    }
+    { name: "Ramagiri", coords: [79.3271, 21.3972], text: "A hill of exile, memory, and epic resonance.", image: "https://upload.wikimedia.org/wikipedia/commons/1/1e/Ramtek_Temple.jpg", link: "/blog/ramtek" },
+    { name: "Amarakantak", coords: [81.7596, 22.6749], text: "Source of the Narmada, where rivers are born of stone.", image: "https://upload.wikimedia.org/wikipedia/commons/4/48/Amarkantak.jpg", link: "/blog/amarkantak" },
+    { name: "Vidisha", coords: [77.8081, 23.5251], text: "Gateway to the Gupta sacred landscape.", image: "https://upload.wikimedia.org/wikipedia/commons/7/7c/Vidisha_Udayagiri.jpg", link: "/blog/vidisha" },
+    { name: "Udayagiri", coords: [77.7296, 23.5244], text: "Caves carved with cosmic symbolism.", image: "https://upload.wikimedia.org/wikipedia/commons/2/2b/Udayagiri_caves.jpg", link: "/blog/udayagiri" },
+    { name: "Ujjain", coords: [75.7885, 23.1765], text: "Where time itself is worshipped.", image: "https://upload.wikimedia.org/wikipedia/commons/9/9f/Mahakaleshwar_Temple.jpg", link: "/blog/ujjain" }
 ];
 
 const panel = document.getElementById("panel");
 
-function showPanel(content) {
-    panel.innerHTML = content;
-}
-
 function showPlace(index) {
     const p = locations[index];
-    showPanel(`
+    panel.innerHTML = `
         <img class="place-image" src="${p.image}">
         <h2>${p.name}</h2>
         <p>${p.text}</p>
         <a class="primary-btn" href="${p.link}">Read More</a>
         <div class="secondary-btn" onclick="showPlace(${(index + 1) % locations.length})">Next →</div>
-    `);
-
+    `;
     map.flyTo({ center: p.coords, zoom: 8, speed: 0.9, curve: 1.4 });
 }
 
@@ -219,7 +155,7 @@ locations.forEach((loc, i) => {
     wrapper.className = "pin-wrapper";
 
     const pin = document.createElement("div");
-    pin.className = "custom-pin";
+    pin.className = "pin-shape";
     wrapper.appendChild(pin);
 
     wrapper.addEventListener("click", () => showPlace(i));
@@ -233,8 +169,8 @@ locations.forEach((loc, i) => {
 showPanel(`
     <h2>Svāgatam</h2>
     <p>
-        Follow the cloud’s path across sacred landscapes
-        where poetry and geography converge.
+        Follow the cloud’s path across sacred geographies,
+        where poetry and landscape converge.
     </p>
     <div class="primary-btn" onclick="showPlace(0)">Begin the Journey</div>
 `);
