@@ -1,128 +1,247 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
+<meta charset="UTF-8">
 <title>Meghadutam – The Cloud’s Journey</title>
 
-<link href="https://unpkg.com/maplibre-gl@3.5.2/dist/maplibre-gl.css" rel="stylesheet" />
-<script src="https://unpkg.com/maplibre-gl@3.5.2/dist/maplibre-gl.js"></script>
+<link href="https://unpkg.com/maplibre-gl@3.5.2/dist/maplibre-gl.css" rel="stylesheet"/>
 
 <style>
 html, body {
     margin: 0;
-    padding: 0;
-    width: 100%;
     height: 100%;
-    background: #0b0b0b;
+    font-family: "Georgia", "Times New Roman", serif;
+    background: #1e1b18;
     overflow: hidden;
-    font-family: Georgia, serif;
 }
 
-/* MAP */
+/* ===== TITLE ===== */
+#title {
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 32px;
+    font-weight: bold;
+    color: #e3d6b5;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.4);
+    z-index: 10;
+}
+
+/* ===== MAP ===== */
 #map {
     position: absolute;
     inset: 0;
 }
 
-/* TITLE */
-.title {
+/* parchment overlay */
+#map::after {
+    content: "";
     position: absolute;
-    top: 22px;
-    left: 50%;
-    transform: translateX(-50%);
-    color: #e6d8b8;
-    font-size: 38px;
-    letter-spacing: 1px;
-    z-index: 10;
+    inset: 0;
+    background:
+        radial-gradient(circle at 25% 30%, rgba(255,255,255,0.06), transparent 40%),
+        radial-gradient(circle at 75% 70%, rgba(255,255,255,0.04), transparent 45%),
+        repeating-linear-gradient(
+            45deg,
+            rgba(255,255,255,0.015),
+            rgba(255,255,255,0.015) 2px,
+            transparent 2px,
+            transparent 6px
+        );
     pointer-events: none;
+    z-index: 2;
 }
 
-/* MARKER */
-.pin {
-    width: 20px;
-    height: 20px;
-    background: #d8c29a;
-    border: 2px solid #f0e3c0;
-    border-radius: 50%;
-    box-shadow: 0 0 10px rgba(0,0,0,0.5);
-    cursor: pointer;
-    transform: translate(-50%, -50%);
+/* ===== INFO PANEL ===== */
+#panel {
+    position: absolute;
+    right: 28px;
+    top: 90px;
+    width: 360px;
+    background: #26221e;
+    border: 1px solid #3d3226;
+    border-radius: 18px;
+    padding: 22px;
+    box-shadow: 0 18px 40px rgba(0,0,0,0.6);
+    color: #e6dccf;
+    z-index: 5;
 }
 
-/* POPUP */
-.maplibregl-popup {
-    max-width: 260px;
+#panel h2 {
+    margin-top: 0;
+    color: #d8c3a5;
 }
 
-.maplibregl-popup-content {
-    background: #1c1a17;
-    color: #e8dcc2;
+.place-image {
+    width: 100%;
+    height: 160px;
+    object-fit: cover;
     border-radius: 12px;
-    padding: 14px;
-    font-size: 15px;
+    margin-bottom: 14px;
+    border: 1px solid #4a3c2c;
 }
 
-.popup-title {
-    font-size: 18px;
-    margin-bottom: 6px;
-}
-
-.popup-link {
-    color: #e6cfa1;
-    text-decoration: none;
+/* Buttons */
+.primary-btn {
+    display: block;
+    margin-top: 14px;
+    padding: 10px 18px;
+    background: #c9ad78;
+    color: #2f261d;
+    text-align: center;
     font-weight: bold;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.primary-btn:hover {
+    background: #e1c48a;
+}
+
+.secondary-btn {
+    display: inline-block;
+    margin-top: 10px;
+    font-size: 14px;
+    color: #c9ab7a;
+    cursor: pointer;
+}
+
+/* ===== PIN STYLE ===== */
+.pin-wrapper {
+    width: 18px;
+    height: 18px;
+    position: relative;
+    cursor: pointer;
+}
+
+.custom-pin {
+    width: 18px;
+    height: 18px;
+    background: #d6c39a;
+    border-radius: 50% 50% 50% 0;
+    transform: rotate(-45deg);
+    position: absolute;
+    top: 0;
+    left: 0;
+    box-shadow: 0 0 6px rgba(0,0,0,0.6);
+}
+
+.custom-pin::after {
+    content: "";
+    width: 8px;
+    height: 8px;
+    background: #6e5b3e;
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    border-radius: 50%;
 }
 </style>
 </head>
 
 <body>
 
-<div class="title">Meghadutam: The Cloud’s Journey</div>
+<div id="title">Meghadutam: The Cloud’s Journey</div>
 <div id="map"></div>
+<div id="panel"></div>
+
+<script src="https://unpkg.com/maplibre-gl@3.5.2/dist/maplibre-gl.js"></script>
 
 <script>
 const map = new maplibregl.Map({
-    container: "map",
-    style: "https://api.maptiler.com/maps/streets-v2/style.json?key=YOUR_API_KEY",
-    center: [78.9629, 20.5937],
-    zoom: 4,
-    pitch: 0,
-    bearing: 0
+    container: 'map',
+    style: 'https://api.maptiler.com/maps/satellite/style.json?key=2KLPs3v6SocVNHhNtM9X',
+    center: [78.5, 23.3],
+    zoom: 5
 });
-
-map.addControl(new maplibregl.NavigationControl({ visualizePitch: false }));
 
 const locations = [
     {
-        name: "Udayagiri",
-        coords: [77.7405, 23.5281],
-        description: "Caves carved with cosmic symbolism.",
-        link: "#"
+        name: "Ramagiri",
+        coords: [79.3271, 21.3972],
+        text: "A hill of exile, memory, and epic resonance.",
+        image: "https://upload.wikimedia.org/wikipedia/commons/1/1e/Ramtek_Temple.jpg",
+        link: "/blog/ramtek"
     },
     {
-        name: "Ramtek",
-        coords: [79.325, 21.3975],
-        description: "Mythic resting place of the cloud.",
-        link: "#"
+        name: "Amarakantak",
+        coords: [81.7596, 22.6749],
+        text: "Source of the Narmada, where rivers are born of stone.",
+        image: "https://upload.wikimedia.org/wikipedia/commons/4/48/Amarkantak.jpg",
+        link: "/blog/amarkantak"
+    },
+    {
+        name: "Vidisha",
+        coords: [77.8081, 23.5251],
+        text: "Gateway to the Gupta sacred landscape.",
+        image: "https://upload.wikimedia.org/wikipedia/commons/7/7c/Vidisha_Udayagiri.jpg",
+        link: "/blog/vidisha"
+    },
+    {
+        name: "Udayagiri",
+        coords: [77.7296, 23.5244],
+        text: "Caves carved with cosmic symbolism.",
+        image: "https://upload.wikimedia.org/wikipedia/commons/2/2b/Udayagiri_caves.jpg",
+        link: "/blog/udayagiri"
+    },
+    {
+        name: "Ujjain",
+        coords: [75.7885, 23.1765],
+        text: "Where time itself is worshipped.",
+        image: "https://upload.wikimedia.org/wikipedia/commons/9/9f/Mahakaleshwar_Temple.jpg",
+        link: "/blog/ujjain"
     }
 ];
 
-locations.forEach(loc => {
-    const el = document.createElement("div");
-    el.className = "pin";
+const panel = document.getElementById("panel");
 
-    const popup = new maplibregl.Popup({ offset: 25 })
-        .setHTML(`
-            <div class="popup-title">${loc.name}</div>
-            <div>${loc.description}</div>
-            <a class="popup-link" href="${loc.link}">Read More →</a>
-        `);
+function showPanel(content) {
+    panel.innerHTML = content;
+}
 
-    new maplibregl.Marker({ element: el, anchor: "center" })
-        .setLngLat(loc.coords)
-        .setPopup(popup)
-        .addTo(map);
+function showPlace(index) {
+    const p = locations[index];
+    showPanel(`
+        <img class="place-image" src="${p.image}">
+        <h2>${p.name}</h2>
+        <p>${p.text}</p>
+        <a class="primary-btn" href="${p.link}">Read More</a>
+        <div class="secondary-btn" onclick="showPlace(${(index + 1) % locations.length})">Next →</div>
+    `);
+
+    map.flyTo({
+        center: p.coords,
+        zoom: 8,
+        speed: 0.9,
+        curve: 1.4
+    });
+}
+
+locations.forEach((loc, i) => {
+    const wrapper = document.createElement("div");
+    wrapper.className = "pin-wrapper";
+
+    const pin = document.createElement("div");
+    pin.className = "custom-pin";
+    wrapper.appendChild(pin);
+
+    wrapper.addEventListener("click", () => showPlace(i));
+
+    new maplibregl.Marker({
+        element: wrapper,
+        anchor: "bottom"
+    }).setLngLat(loc.coords).addTo(map);
 });
+
+showPanel(`
+    <h2>Svāgatam</h2>
+    <p>
+        Follow the cloud’s path across sacred geographies —
+        where poetry, memory, and landscape converge.
+    </p>
+    <div class="primary-btn" onclick="showPlace(0)">Begin the Journey</div>
+`);
 </script>
 
 </body>
