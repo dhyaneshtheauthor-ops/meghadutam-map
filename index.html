@@ -73,18 +73,12 @@ html, body {
     font-size: 24px;
     color: #d8c3a5;
 }
-    #panel p {
+
+#panel p {
     line-height: 1.65;
     font-size: 16.5px;
     margin-bottom: 14px;
-    letter-spacing: 0.2px;
 }
-
-#panel h2 {
-    line-height: 1.3;
-    margin-bottom: 12px;
-}
-
 
 .place-image {
     width: 100%;
@@ -95,7 +89,6 @@ html, body {
     border: 1px solid #4a3c2c;
 }
 
-/* Buttons */
 .primary-btn {
     display: block;
     margin-top: 16px;
@@ -142,56 +135,81 @@ const locations = [
     {
         name: "Ramagiri",
         coords: [79.33261, 21.39853],
-        text: "<strong>Ramtek, Maharashtra</strong><br>The launchpad of our epic journey. Blessed by Shri Rama, nestled within the dangerous Dandakaranya. Click the link to read more.",
+        text: "<strong>Ramtek, Maharashtra</strong><br>The launchpad of our epic journey. Blessed by Shri Rama, nestled within the Dandakaranya.",
         image: "https://as2.ftcdn.net/jpg/05/01/19/79/1000_F_501197913_jyVGqK5uSWraWXXHbSIXmbCiijJmJCMQ.jpg",
         link: "/blog/ramtek"
     },
     {
         name: "Amrakuta",
         coords: [81.7596, 22.6749],
-        text: "<strong>Amarkantak, Madhya Pradesh</strong><br>Source of the sacred Reva, an ancient pilgrimage site.",
+        text: "<strong>Amarkantak</strong><br>Source of the sacred Narmada, ancient and eternal.",
         image: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/A_Hindu_temple%2C_Amarkantak_Madhya_Pradesh_India.jpg/1200px-A_Hindu_temple%2C_Amarkantak_Madhya_Pradesh_India.jpg",
         link: "/blog/amarkantak"
     },
     {
         name: "Vidisha",
         coords: [77.8081, 23.5251],
-        text: "<strong>Vidisha, Madhya Pradesh</strong><br>At the heart of ancient commerce and spirituality, its ruined temples speak of glory and resilience.",
-        image: "https://swarajya.gumlet.io/swarajya/2018-11/e1959cf7-a15d-4c07-839c-76c4163d2b51/IMG_20180813_124949574_HDR.jpg?w=610&q=75&compress=true&format=auto",
+        text: "<strong>Vidisha</strong><br>A crossroads of trade, power, and devotion.",
+        image: "https://swarajya.gumlet.io/swarajya/2018-11/e1959cf7-a15d-4c07-839c-76c4163d2b51/IMG_20180813_124949574_HDR.jpg",
         link: "/blog/vidisha"
     },
     {
         name: "Nichai",
         coords: [77.77202, 23.53630],
-        text: "<strong>Udayagiri Caves, Madhya Pradesh</strong><br>Caves carved with cosmic alignment, once home to a marvel of astronomy and metallurgy.",
+        text: "<strong>Udayagiri</strong><br>Caves aligned to the cosmos, carved in stone and shadow.",
         image: "https://upload.wikimedia.org/wikipedia/commons/3/3d/Varahavtar_Panel.jpg",
         link: "/blog/udayagiri"
     },
     {
         name: "Ujjayini",
         coords: [75.7885, 23.1765],
-        text: "<strong>Ujjain, Madhya Pradesh</strong><br>Kalidasa's home, where Mahakala rules over time itself.",
+        text: "<strong>Ujjain</strong><br>Where Mahākāla measures time itself.",
         image: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/75/Mahakaleshwar_Temple%2C_Ujjain.jpg/1200px-Mahakaleshwar_Temple%2C_Ujjain.jpg",
         link: "/blog/ujjain"
     }
 ];
 
-const panel = document.getElementById("panel");
+// ---- ADD PATH LINE ----
+map.on("load", () => {
+    map.addSource("journey-line", {
+        type: "geojson",
+        data: {
+            type: "Feature",
+            geometry: {
+                type: "LineString",
+                coordinates: locations.map(l => l.coords)
+            }
+        }
+    });
 
-function showPanel(content) {
-    panel.innerHTML = content;
-}
+    map.addLayer({
+        id: "journey-path",
+        type: "line",
+        source: "journey-line",
+        layout: {
+            "line-join": "round",
+            "line-cap": "round"
+        },
+        paint: {
+            "line-color": "#d4b47c",
+            "line-width": 4,
+            "line-opacity": 0.85
+        }
+    });
+});
+
+// ===== INTERACTION =====
+const panel = document.getElementById("panel");
 
 function showPlace(index) {
     const p = locations[index];
-    showPanel(`
+    panel.innerHTML = `
         <img class="place-image" src="${p.image}">
         <h2>${p.name}</h2>
         <p>${p.text}</p>
         <a class="primary-btn" href="${p.link}">Read More</a>
         <div class="secondary-btn" onclick="showPlace(${(index + 1) % locations.length})">Next →</div>
-    `);
-
+    `;
     map.flyTo({ center: p.coords, zoom: 8, speed: 0.9, curve: 1.4 });
 }
 
@@ -204,15 +222,14 @@ locations.forEach((loc, i) => {
     marker.getElement().addEventListener("click", () => showPlace(i));
 });
 
-    showPanel(`
-        <h2>Svāgataṃ</h2>
-        <p>
-        Follow the path of the cloud messenger across sacred landscapes,
-        where poetry and geography converge.
-        </p>
-        <div class="primary-btn" onclick="showPlace(0)">Enter the Map</div>
-        <a class="primary-btn" href="https://dhyankatha.wordpress.com/2026/01/01/the-clouds-journey-introduction/" target="_blank" style="margin-top:10px;">Read the Introduction</a>
-    `);
+panel.innerHTML = `
+    <h2>Svāgataṃ</h2>
+    <p>
+    Follow the cloud’s sacred passage across forests, rivers, and forgotten capitals —
+    a journey mapped through poetry and memory.
+    </p>
+    <div class="primary-btn" onclick="showPlace(0)">Begin the Journey</div>
+`;
 </script>
 
 </body>
