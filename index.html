@@ -130,36 +130,36 @@ const locations = [
     {
         name: "Ramagiri",
         coords: [79.3271, 21.3972],
-        text: "A hill of exile, memory, and epic resonance.",
-        image: "https://upload.wikimedia.org/wikipedia/commons/1/1e/Ramtek_Temple.jpg",
+        text: "The launchpad of our epic journey, blessed by Shri Rama. Click the link to read more.",
+        image: "https://as2.ftcdn.net/jpg/05/01/19/79/1000_F_501197913_jyVGqK5uSWraWXXHbSIXmbCiijJmJCMQ.jpg",
         link: "/blog/ramtek"
     },
     {
-        name: "Amarakantak",
+        name: "Amrakuta",
         coords: [81.7596, 22.6749],
-        text: "Source of the Narmada, where rivers are born of stone.",
-        image: "https://upload.wikimedia.org/wikipedia/commons/4/48/Amarkantak.jpg",
+        text: "Source of the sacred Reva, an ancient pilgrimage site.",
+        image: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/A_Hindu_temple%2C_Amarkantak_Madhya_Pradesh_India.jpg/1200px-A_Hindu_temple%2C_Amarkantak_Madhya_Pradesh_India.jpg",
         link: "/blog/amarkantak"
     },
     {
         name: "Vidisha",
         coords: [77.8081, 23.5251],
-        text: "Gateway to the Gupta sacred landscape.",
-        image: "https://upload.wikimedia.org/wikipedia/commons/7/7c/Vidisha_Udayagiri.jpg",
+        text: "At the heart of ancient commerce and spirituality, its ruined temples speak of glory and resilience.",
+        image: "https://swarajya.gumlet.io/swarajya/2018-11/e1959cf7-a15d-4c07-839c-76c4163d2b51/IMG_20180813_124949574_HDR.jpg?w=610&q=75&compress=true&format=auto",
         link: "/blog/vidisha"
     },
     {
-        name: "Udayagiri",
+        name: "Nichai",
         coords: [77.7296, 23.5244],
-        text: "Caves carved with cosmic symbolism.",
-        image: "https://upload.wikimedia.org/wikipedia/commons/2/2b/Udayagiri_caves.jpg",
+        text: "Caves carved with cosmic alignment, once home to a marvel of astronomy and metallurgy.",
+        image: "https://upload.wikimedia.org/wikipedia/commons/3/3d/Varahavtar_Panel.jpg",
         link: "/blog/udayagiri"
     },
     {
-        name: "Ujjain",
+        name: "Ujjayini",
         coords: [75.7885, 23.1765],
         text: "Where time itself is worshipped.",
-        image: "https://upload.wikimedia.org/wikipedia/commons/9/9f/Mahakaleshwar_Temple.jpg",
+        image: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/75/Mahakaleshwar_Temple%2C_Ujjain.jpg/1200px-Mahakaleshwar_Temple%2C_Ujjain.jpg",
         link: "/blog/ujjain"
     }
 ];
@@ -192,14 +192,15 @@ locations.forEach((loc, i) => {
     marker.getElement().addEventListener("click", () => showPlace(i));
 });
 
-showPanel(`
-    <h2>Svāgatam</h2>
-    <p>
-        Follow the cloud’s path across sacred landscapes —
-        where poetry, memory, and geography converge.
-    </p>
-    <div class="primary-btn" onclick="showPlace(0)">Begin the Journey</div>
-`);
+    showPanel(`
+        <h2>Svāgataṃ</h2>
+        <p>
+        Follow the path of the cloud messenger across sacred landscapes,
+        where poetry and geography converge.
+        </p>
+        <div class="primary-btn" onclick="showPlace(0)">Enter the Map</div>
+        <a class="primary-btn" href="https://yourwordpresssite.com/introduction" target="_blank" style="margin-top:10px;">Read the Introduction</a>
+    `);
 </script>
 
 </body>
