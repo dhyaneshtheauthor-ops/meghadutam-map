@@ -1,75 +1,77 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
+<meta charset="UTF-8" />
 <title>Meghadutam – The Cloud’s Journey</title>
 
 <link href="https://unpkg.com/maplibre-gl@3.5.2/dist/maplibre-gl.css" rel="stylesheet" />
 <script src="https://unpkg.com/maplibre-gl@3.5.2/dist/maplibre-gl.js"></script>
 
 <style>
-    body {
-        margin: 0;
-        background: #0f0f0f;
-        font-family: "Georgia", serif;
-    }
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    background: #0b0b0b;
+    overflow: hidden;
+    font-family: Georgia, serif;
+}
 
-    #map {
-        position: absolute;
-        inset: 0;
-    }
+/* MAP */
+#map {
+    position: absolute;
+    inset: 0;
+}
 
-    .title {
-        position: absolute;
-        top: 24px;
-        left: 50%;
-        transform: translateX(-50%);
-        color: #e8dcc2;
-        font-size: 38px;
-        letter-spacing: 1px;
-        z-index: 10;
-        pointer-events: none;
-    }
+/* TITLE */
+.title {
+    position: absolute;
+    top: 22px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: #e6d8b8;
+    font-size: 38px;
+    letter-spacing: 1px;
+    z-index: 10;
+    pointer-events: none;
+}
 
-    /* === PIN STYLE === */
-    .pin {
-        width: 20px;
-        height: 20px;
-        background: #d6c29a;
-        border-radius: 50%;
-        border: 2px solid #f1e6c8;
-        box-shadow: 0 0 8px rgba(0,0,0,0.4);
-        cursor: pointer;
-        transform: translate(-50%, -50%);
-        transition: transform 0.2s ease;
-    }
+/* MARKER */
+.pin {
+    width: 20px;
+    height: 20px;
+    background: #d8c29a;
+    border: 2px solid #f0e3c0;
+    border-radius: 50%;
+    box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    cursor: pointer;
+    transform: translate(-50%, -50%);
+}
 
-    .pin:hover {
-        transform: translate(-50%, -50%) scale(1.2);
-    }
+/* POPUP */
+.maplibregl-popup {
+    max-width: 260px;
+}
 
-    .maplibregl-popup {
-        max-width: 260px;
-        font-family: Georgia, serif;
-    }
+.maplibregl-popup-content {
+    background: #1c1a17;
+    color: #e8dcc2;
+    border-radius: 12px;
+    padding: 14px;
+    font-size: 15px;
+}
 
-    .maplibregl-popup-content {
-        background: #1b1916;
-        color: #e7dcc2;
-        border-radius: 12px;
-        padding: 14px;
-    }
+.popup-title {
+    font-size: 18px;
+    margin-bottom: 6px;
+}
 
-    .popup-title {
-        font-size: 18px;
-        margin-bottom: 6px;
-    }
-
-    .popup-link {
-        color: #d8c38a;
-        text-decoration: none;
-        font-weight: bold;
-    }
+.popup-link {
+    color: #e6cfa1;
+    text-decoration: none;
+    font-weight: bold;
+}
 </style>
 </head>
 
@@ -80,33 +82,31 @@
 
 <script>
 const map = new maplibregl.Map({
-    container: 'map',
-    style: 'https://api.maptiler.com/maps/streets-v2/style.json?key=YOUR_API_KEY',
+    container: "map",
+    style: "https://api.maptiler.com/maps/streets-v2/style.json?key=YOUR_API_KEY",
     center: [78.9629, 20.5937],
     zoom: 4,
     pitch: 0,
     bearing: 0
 });
 
-map.addControl(new maplibregl.NavigationControl());
+map.addControl(new maplibregl.NavigationControl({ visualizePitch: false }));
 
-// Locations
 const locations = [
     {
         name: "Udayagiri",
         coords: [77.7405, 23.5281],
-        text: "Caves carved with cosmic symbolism.",
+        description: "Caves carved with cosmic symbolism.",
         link: "#"
     },
     {
         name: "Ramtek",
-        coords: [79.3250, 21.3975],
-        text: "Mythic halt of the cloud-messenger.",
+        coords: [79.325, 21.3975],
+        description: "Mythic resting place of the cloud.",
         link: "#"
     }
 ];
 
-// Create stable HTML markers
 locations.forEach(loc => {
     const el = document.createElement("div");
     el.className = "pin";
@@ -114,7 +114,7 @@ locations.forEach(loc => {
     const popup = new maplibregl.Popup({ offset: 25 })
         .setHTML(`
             <div class="popup-title">${loc.name}</div>
-            <div>${loc.text}</div>
+            <div>${loc.description}</div>
             <a class="popup-link" href="${loc.link}">Read More →</a>
         `);
 
